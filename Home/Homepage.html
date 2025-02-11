@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página Web</title>
+    <link rel="stylesheet" href="./HomepageCSS.css">
+</head>
+<body>
+    <nav>
+        <button class="stats-btn">Stats</button>
+        <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        <div class="auth-buttons">
+            <button class="create-btn">Create</button>
+            <button class="login-btn">Login</button>
+        </div>
+    </nav>
+
+    <main>
+        <h1>Event Reports from any language and any country</h1>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i class="search-icon">🔍</i>
+                <input type="text" placeholder="Event title or key words">
+            </div>
+        </div>
+
+        <div class="filters">
+            <select id="eventType" class="filter-select">
+                <option value="irl">IRL Events</option>
+                <option value="digital">Digital Events</option>
+            </select>
+
+            <select id="secondaryFilter" class="filter-select">
+                <!-- Se llena dinámicamente con JavaScript -->
+            </select>
+
+            <img src="./icons/fire.svg" alt="Hot" class="hot-icon">
+
+            <select id="timeFrame" class="filter-select">
+                <option value="12h">12 H</option>
+                <option value="24h">24 H</option>
+                <option value="48h">48 H</option>
+            </select>
+        </div>
+
+        <div class="events-map-container">
+            <div class="blog-list" id="mainBlogList">
+                <!-- Eventos dinámicos aquí -->
+            </div>
+        </div>
+
+        <div class="latest-events">
+            <h2>Latest events <span class="live-tag">Live</span></h2>
+            <div class="latest-events-list">
+                <!-- Lista de eventos recientes -->
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Events reported forever</p>
+        <div class="counter" id="eventCounter">3,324</div>
+        <div class="social-links">
+            <a href="#" class="social-icon">Facebook</a>
+            <a href="#" class="social-icon">LinkedIn</a>
+            <a href="#" class="social-icon">YouTube</a>
+            <a href="#" class="social-icon">Instagram</a>
+        </div>
+    </footer>
+
+    <script src="./js/countries.js"></script>
+    <script src="./js/languages-list.js"></script>
+    <script src="./js/HomepageJS.js"></script>
+    <script src="./js/script.js"></script>
+</body>
+</html>

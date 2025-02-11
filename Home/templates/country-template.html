@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{Country Name}} Events - CER</title>
+    <link rel="stylesheet" href="../country.css">
+</head>
+<body>
+    <!-- Modal para Create -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <img src="../cer-logo.png" alt="CER Logo" class="modal-logo">
+            <h2 class="modal-title">CREATE</h2>
+            <div class="modal-buttons">
+                <button class="modal-btn">Reports</button>
+                <button class="modal-btn">Events</button>
+                <button class="modal-btn">Mentions</button>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <button class="stats-btn">Stats</button>
+        <img src="../cer-logo.png" alt="CER Logo" class="logo">
+        <div class="auth-buttons">
+            <button class="create-btn">Create</button>
+            <button class="login-btn">Login</button>
+        </div>
+    </nav>
+
+    <main>
+        <h1>Event Reports from {{Country Name}}</h1>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <i class="search-icon">🔍</i>
+                <input type="text" placeholder="Event title or key words">
+            </div>
+        </div>
+
+        <div class="filters">
+            <select id="eventType" class="filter-select">
+                <option value="irl">IRL Events</option>
+                <option value="digital">Digital Events</option>
+            </select>
+
+            <select id="language" class="filter-select">
+                <option value="">Language</option>
+                <!-- Se llenará dinámicamente con los idiomas del país -->
+            </select>
+
+            <span class="fire-icon">🔥</span>
+
+            <select id="timeFrame" class="filter-select">
+                <option value="12">12 H</option>
+                <option value="24">24 H</option>
+                <option value="36">36 H</option>
+                <option value="48">48 H</option>
+            </select>
+        </div>
+
+        <div class="events-container">
+            <div class="events-list" id="mainEventsList">
+                <!-- Los eventos se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <div class="latest-events">
+            <h2>Latest events from {{Country Name}} <span class="live-tag">Live</span></h2>
+            <div class="latest-events-list">
+                <!-- Lista de eventos recientes -->
+            </div>
+        </div>
+
+        <div class="country-stats">
+            <div class="stats-card">
+                <h3>Events reported</h3>
+                <div class="stats-number">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Active reporters</h3>
+                <div class="stats-number">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Active organizers</h3>
+                <div class="stats-number">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Total speakers</h3>
+                <div class="stats-number">0</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <span class="read-text">Read</span>
+            <div class="social-links">
+                <a href="#" class="social-icon">
+                    <img src="../icons/facebook.svg" alt="Facebook">
+                </a>
+                <a href="#" class="social-icon">
+                    <img src="../icons/linkedin.svg" alt="LinkedIn">
+                </a>
+                <a href="#" class="social-icon">
+                    <img src="../icons/youtube.svg" alt="YouTube">
+                </a>
+                <a href="#" class="social-icon">
+                    <img src="../icons/instagram.svg" alt="Instagram">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/countries.js"></script>
+</body>
+</html> 

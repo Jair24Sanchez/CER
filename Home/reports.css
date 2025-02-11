@@ -1,0 +1,220 @@
+:root {
+    --primary-color: #000;
+    --secondary-color: #666;
+    --background-color: #fff;
+    --border-color: #ddd;
+    --declined-color: #ff4444;
+    --available-color: #4CAF50;
+    --approved-color: #2196F3;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f5f5;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--background-color);
+}
+
+.logo {
+    height: 40px;
+    margin: 0 auto;
+}
+
+.stats-btn {
+    background-color: rgb(172, 172, 172);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.auth-buttons button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    margin-left: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 2rem;
+}
+
+.filters-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filter-select {
+    padding: 0.5rem 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    min-width: 150px;
+    background-color: white;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.free-report-box {
+    aspect-ratio: 1;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.free-report-btn {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.plus-icon {
+    font-size: 3rem;
+    color: var(--secondary-color);
+}
+
+.event-box {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.event-thumbnail {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.event-title {
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+.organizer-info {
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.organizer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.event-details {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.country-flag {
+    width: 24px;
+    height: 16px;
+    object-fit: cover;
+}
+
+.event-status {
+    padding: 0.5rem;
+    text-align: center;
+    color: white;
+    font-weight: 500;
+}
+
+.event-status.available {
+    background-color: var(--available-color);
+}
+
+.event-status.declined {
+    background-color: var(--declined-color);
+}
+
+.event-status.approved {
+    background-color: var(--approved-color);
+}
+
+.loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: spin 1s linear infinite;
+}
+
+.no-events-message,
+.error-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+    color: var(--declined-color);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .events-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+} 

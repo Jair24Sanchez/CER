@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Free Content - CER</title>
+    <link rel="stylesheet" href="./free-content.css">
+</head>
+<body>
+    <header>
+        <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        <button class="login-btn">Login</button>
+    </header>
+
+    <main>
+        <div class="content-container">
+            <input type="text" class="title-input" placeholder="Título">
+            
+            <div class="contributors-section">
+                <div class="contributor-group">
+                    <div class="profile-placeholder">
+                        <img src="./default-avatar.svg" alt="Default profile" class="profile-img">
+                    </div>
+                    <span class="contributor-label">Event organizer</span>
+                    <button class="add-contributor">+</button>
+                </div>
+
+                <div class="contributor-group">
+                    <div class="profile-placeholder">
+                        <img src="./default-avatar.svg" alt="Default profile" class="profile-img">
+                    </div>
+                    <span class="contributor-label">Speaker(s)</span>
+                    <button class="add-contributor">+</button>
+                </div>
+            </div>
+
+            <div class="filters-container">
+                <select id="eventType" class="filter-select">
+                    <option value="irl">IRL Events</option>
+                    <option value="digital">Digital Events</option>
+                </select>
+
+                <select id="secondaryFilter" class="filter-select">
+                    <!-- Se llenará dinámicamente -->
+                </select>
+            </div>
+
+            <div class="editor-container">
+                <h3 class="editor-title" 
+                    contenteditable="true" 
+                    data-placeholder="Start writing" 
+                    data-testid="editorTitleParagraph">
+                </h3>
+                
+                <div class="editor-toolbar">
+                    <button class="toolbar-btn toggle-tools" id="toggleToolsBtn">+</button>
+                    <div class="toolbar-options" id="toolbarOptions">
+                        <button class="toolbar-btn">IMAGEN</button>
+                        <button class="toolbar-btn">&lt;EMBED&gt;</button>
+                        <button class="toolbar-btn">(CODE)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mini-guide">
+                <p>Si no sabes cómo empezar, aquí te dejamos esta mini-guía:</p>
+                <ul>
+                    <li>Empieza con una introducción que exprese en forma general el evento.</li>
+                    <li>Agrega la imagen principal del evento.</li>
+                    <li>Escribe el desarrollo cronológico del evento, quien habló y qué dijo, hasta su fin.</li>
+                    <li>Podrías cerrar con alguna conclusión, más una invitación o aviso si es que lo hubo para los participantes.</li>
+                </ul>
+            </div>
+
+            <button class="submit-btn">Enviar</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <span>Create</span>
+            <div class="social-links">
+                <a href="#" class="social-icon">Facebook</a>
+                <a href="#" class="social-icon">LinkedIn</a>
+                <a href="#" class="social-icon">YouTube</a>
+                <a href="#" class="social-icon">Instagram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/free-content.js"></script>
+</body>
+</html> 
