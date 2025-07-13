@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporta eventos - CER</title>
+    <link rel="stylesheet" href="./report-events.css">
+</head>
+<body>
+    <!-- Modal CREATE -->
+    <div id="createModal" class="modal-create">
+        <div class="modal-create-content">
+            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <div class="modal-create-title"><em>CREATE</em></div>
+            <a href="./report-events.html" class="modal-create-btn">Reports</a>
+            <button class="modal-create-btn">Organize</button>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <a href="./Homepage.html" class="logo-link">
+            <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <div class="title-bar">
+        <img src="./report-events.jpg" alt="Reporta eventos" class="report-title-img" width="918" height="72" onerror="this.style.display='none';document.getElementById('imgError').style.display='block'">
+        <div id="imgError" style="display:none;color:#c00;font-weight:bold;text-align:center;">No se encontró la imagen report-events.jpg</div>
+    </div>
+
+    <div class="filters-container">
+        <select id="eventType" class="filter-select">
+            <option value="irl">IRL Events</option>
+            <option value="digital">Digital Events</option>
+        </select>
+        <select id="secondaryFilter" class="filter-select">
+            <option value="">Subtipo</option>
+        </select>
+        <select id="statusFilter" class="filter-select">
+            <option value="">Status</option>
+            <option value="disponible">Disponible</option>
+            <option value="espera">Espera</option>
+            <option value="comienza">Comienza</option>
+            <option value="edicion">Edición</option>
+            <option value="declinado">Declinado</option>
+            <option value="publicado">Publicado</option>
+        </select>
+        <select id="orderFilter" class="filter-select">
+            <option value="relevancia">Relevancia</option>
+            <option value="mayor-recompensa">Mayor recompensa a Voluntario</option>
+            <option value="menor-recompensa">Voluntario a Mayor recompensa</option>
+        </select>
+    </div>
+
+    <main>
+        <div class="requests-grid" id="requestsGrid">
+            <div class="own-report-card" id="ownReportBtn">
+                <div class="own-report-line"></div>
+                <div class="own-report-plus">+</div>
+            </div>
+            <!-- Aquí van los contenedores de solicitudes de reportes -->
+        </div>
+
+        <div class="counter" id="eventCounter">Eventos reportados para siempre: <span>0</span></div>
+    </main>
+
+    <script src="./js/countries-list.js"></script>
+    <script src="./js/languages-list.js"></script>
+    <script src="./js/report-events.js"></script>
+    <script src="./js/modal-create.js"></script>
+    <script>
+    document.getElementById('ownReportBtn').addEventListener('click', function() {
+        window.location.href = 'reporte-por-iniciativa-propia.html';
+    });
+    </script>
+</body>
+</html> 

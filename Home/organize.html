@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizar eventos - CER</title>
+    <link rel="stylesheet" href="./report-events.css">
+    <link rel="stylesheet" href="./organize.css">
+</head>
+<body>
+    <!-- Modal CREATE -->
+    <div id="createModal" class="modal-create">
+        <div class="modal-create-content">
+            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <div class="modal-create-title"><em>CREATE</em></div>
+            <a href="./report-events.html" class="modal-create-btn">Reports</a>
+            <button class="modal-create-btn">Organize</button>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <a href="./Homepage.html" class="logo-link">
+            <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <div class="title-bar">
+        <div class="organize-title">
+            <div class="organize-center-group">
+                <span class="organize-step">1</span>
+                <span class="organize-text">Organize reports</span>
+            </div>
+            <button class="organize-btn">2</button>
+        </div>
+    </div>
+
+    <main>
+        <div class="organize-form-row">
+            <form class="organize-form organize-form-left">
+                <input type="text" id="event-title" name="event-title" class="form-input" placeholder="Título del evento" maxlength="100" required>
+                <label class="custom-file-btn-full" for="event-image">
+                    <span class="custom-file-placeholder">Agrega una imagen</span>
+                    <span class="custom-file-icon">⭳</span>
+                    <input type="file" id="event-image" name="event-image" class="custom-file-input-full" accept=".png,.jpg,.jpeg" required>
+                </label>
+                <div class="form-row">
+                    <span class="form-label short">Inicio</span>
+                    <input type="date" id="start-date" name="start-date" class="form-input date" required>
+                    <input type="time" id="start-time" name="start-time" class="form-input time" required>
+                </div>
+                <div class="form-row">
+                    <span class="form-label short">Fin</span>
+                    <input type="date" id="end-date" name="end-date" class="form-input date" required>
+                    <input type="time" id="end-time" name="end-time" class="form-input time" required>
+                </div>
+                <textarea id="event-description" name="event-description" class="form-input textarea" placeholder="Descripción del evento" maxlength="500" required></textarea>
+            </form>
+            <form class="organize-form organize-form-right">
+                <div class="form-type-section">
+                    <span class="form-type-title">Tipo:</span>
+                    <div class="form-type-options">
+                        <label class="form-type-radio">
+                            <input type="radio" name="event-type" value="irl" checked>
+                            <span class="form-type-custom">IRL</span>
+                        </label>
+                        <label class="form-type-radio">
+                            <input type="radio" name="event-type" value="digital">
+                            <span class="form-type-custom">DIGITAL</span>
+                        </label>
+                    </div>
+                </div>
+                <select id="event-subtype" name="event-subtype" class="form-input"><option value="">Subtipo</option></select>
+                <input type="url" id="event-location" name="event-location" class="form-input" placeholder="Ubicación (Link)">
+                <div class="calculator-container">
+                    <div class="calc-row calc-row-top">
+                        <span class="calc-label">Reporteros</span>
+                        <div class="calc-counter">
+                            <button type="button" class="counter-btn counter-down">&#8595;</button>
+                            <input type="number" id="reporters-count" min="1" value="1" class="counter-input">
+                            <button type="button" class="counter-btn counter-up">&#8593;</button>
+                        </div>
+                    </div>
+                    <div class="calc-row calc-row-reward">
+                        <div class="calc-reward-group">
+                            <select id="reward-type" class="calc-dropdown">
+                                <option value="voluntario">Voluntario</option>
+                                <option value="recompensa">Recompensa</option>
+                            </select>
+                            <span class="calc-x" id="calc-x" style="display:none;">x</span>
+                            <input type="text" id="reward-amount" class="calc-money" placeholder="$0" style="display:none;">
+                        </div>
+                    </div>
+                    <div class="calc-row calc-row-bottom">
+                        <span class="calc-label">Total:</span>
+                        <button type="button" class="calc-equals">=</button>
+                        <input type="text" id="calc-total" class="calc-total" readonly value="$0">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn-final">Solicita reportaje</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="./js/countries-list.js"></script>
+    <script src="./js/languages-list.js"></script>
+    <script src="./js/modal-create.js"></script>
+    <script src="./js/organize-form.js"></script>
+</body>
+</html> 

@@ -25,6 +25,11 @@ nav {
     background-color: var(--background-color);
 }
 
+.logo-link {
+    text-decoration: none;
+    display: block;
+}
+
 .logo {
     height: 40px;
     margin: 0 auto;

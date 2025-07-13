@@ -1,0 +1,264 @@
+.blog-editor {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.blog-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-title {
+    width: 100%;
+    font-size: 2rem;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-bottom: 2px solid #eee;
+    outline: none;
+}
+
+.blog-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.tag-profile-btn {
+    background: none;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.profile-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-image {
+    width: 40px;
+    height: 40px;
+    background: #eee;
+    border-radius: 50%;
+}
+
+.profile-name {
+    width: 102px;
+    height: 28px;
+    background: #eee;
+    border-radius: 4px;
+}
+
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filter-select {
+    padding: 0.4rem 1.5rem 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 0.8em;
+    cursor: pointer;
+    min-width: 100px;
+    max-width: 150px;
+    font-size: 0.9rem;
+}
+
+.filter-select:hover {
+    border-color: #007bff;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Estilos para el select de países e idiomas */
+#secondaryFilter {
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+#secondaryFilter::-webkit-scrollbar {
+    width: 6px;
+}
+
+#secondaryFilter::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#secondaryFilter::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+#secondaryFilter::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+    .filters {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    
+    .filter-select {
+        width: calc(50% - 0.25rem);
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-select {
+        width: 100%;
+        min-width: 100%;
+    }
+}
+
+.editor-tools {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+.tool-btn {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-btn:hover {
+    background: #f0f0f0;
+    border-color: #007bff;
+}
+
+.tool-btn:active {
+    background: #e9ecef;
+    transform: translateY(1px);
+}
+
+.tool-btn strong {
+    font-weight: 700;
+}
+
+.tool-btn em {
+    font-style: italic;
+}
+
+.tool-btn u {
+    text-decoration: underline;
+}
+
+.arrow-up, .arrow-down {
+    font-size: 0.8rem;
+    margin-left: 2px;
+    line-height: 1;
+}
+
+.image-upload {
+    padding: 0.4rem;
+}
+
+.image-upload span {
+    font-size: 1.1rem;
+}
+
+.blog-content {
+    min-height: 300px;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    outline: none;
+    font-size: 20px;
+    line-height: 1.5;
+}
+
+.blog-content:empty:before {
+    content: attr(placeholder);
+    color: #999;
+}
+
+/* Estilos para los diferentes tamaños de fuente */
+.blog-content font[size="1"] { font-size: 20px; }
+.blog-content font[size="2"] { font-size: 28px; }
+.blog-content font[size="3"] { font-size: 38px; }
+
+/* Asegurar que los estilos de texto se mantengan consistentes */
+.blog-content strong {
+    font-weight: 700;
+}
+
+.blog-content em {
+    font-style: italic;
+}
+
+.blog-content u {
+    text-decoration: underline;
+}
+
+.submit-btn {
+    display: block;
+    width: 124px;
+    height: 46px;
+    margin: 0 auto;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+}
+
+.logo-link {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+    opacity: 0.8;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+} 

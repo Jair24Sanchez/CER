@@ -7,9 +7,19 @@
     <link rel="stylesheet" href="./HomepageCSS.css">
 </head>
 <body>
+    <!-- Modal CREATE -->
+    <div id="createModal" class="modal-create">
+        <div class="modal-create-content">
+            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <div class="modal-create-title"><em>CREATE</em></div>
+            <a href="./report-events.html" class="modal-create-btn">Reports</a>
+            <button class="modal-create-btn">Organize</button>
+        </div>
+    </div>
+
     <nav>
         <button class="stats-btn">Stats</button>
-        <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        <img src="./cer-logo.png" alt="CER Logo" class="logo nav-logo">
         <div class="auth-buttons">
             <button class="create-btn">Create</button>
             <button class="login-btn">Login</button>
@@ -35,20 +45,6 @@
             <select id="secondaryFilter" class="filter-select">
                 <!-- Se llena dinámicamente con JavaScript -->
             </select>
-
-            <img src="./icons/fire.svg" alt="Hot" class="hot-icon">
-
-            <select id="timeFrame" class="filter-select">
-                <option value="12h">12 H</option>
-                <option value="24h">24 H</option>
-                <option value="48h">48 H</option>
-            </select>
-        </div>
-
-        <div class="events-map-container">
-            <div class="blog-list" id="mainBlogList">
-                <!-- Eventos dinámicos aquí -->
-            </div>
         </div>
 
         <div class="latest-events">
@@ -70,9 +66,9 @@
         </div>
     </footer>
 
-    <script src="./js/countries.js"></script>
+    <!-- Scripts -->
+    <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
     <script src="./js/HomepageJS.js"></script>
-    <script src="./js/script.js"></script>
 </body>
 </html>

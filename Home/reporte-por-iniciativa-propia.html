@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte por iniciativa propia - CER</title>
+    <link rel="stylesheet" href="./report-events.css">
+    <link rel="stylesheet" href="./blog-editor.css">
+</head>
+<body>
+    <header class="main-header">
+        <a href="./Homepage.html" class="logo-link">
+            <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="blog-editor">
+        <div class="blog-container">
+            <!-- Título del blog -->
+            <input type="text" class="blog-title" placeholder="Escribe el título de tu blog">
+
+            <div class="blog-meta">
+                <!-- Sección de etiquetas -->
+                <div class="tag-section">
+                    <button class="tag-profile-btn">
+                        <div class="profile-preview">
+                            <div class="profile-image"></div>
+                            <div class="profile-name"></div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters">
+                    <select id="eventType" class="filter-select">
+                        <option value="irl">IRL Events</option>
+                        <option value="digital">Digital Events</option>
+                    </select>
+                    <select id="secondaryFilter" class="filter-select">
+                        <!-- Se llenará dinámicamente con JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Herramientas de edición -->
+            <div class="editor-tools">
+                <button class="tool-btn" data-tool="bold"><strong>B</strong></button>
+                <button class="tool-btn" data-tool="italic"><em>K</em></button>
+                <button class="tool-btn" data-tool="underline"><u>U</u></button>
+                <button class="tool-btn" data-tool="increase-font">A<span class="arrow-up">↑</span></button>
+                <button class="tool-btn" data-tool="decrease-font">A<span class="arrow-down">↓</span></button>
+                <label class="tool-btn image-upload">
+                    <input type="file" accept=".jpg,.png" hidden>
+                    <span>📷</span>
+                </label>
+            </div>
+
+            <!-- Área de contenido -->
+            <div class="blog-content" contenteditable="true" placeholder="Escribe el contenido de tu blog aquí..."></div>
+
+            <!-- Botón de envío -->
+            <button class="submit-btn">Enviar</button>
+        </div>
+    </main>
+
+    <script src="./js/countries-list.js"></script>
+    <script src="./js/languages-list.js"></script>
+    <script src="./js/blog-editor.js"></script>
+    <script src="./js/modal-create.js"></script>
+</body>
+</html> 
