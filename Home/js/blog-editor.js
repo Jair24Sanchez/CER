@@ -91,6 +91,25 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
+    // Función para generar URL de destino basada en la selección
+    function generateTargetURL(type, subtype) {
+        if (type === 'irl') {
+            // Para IRL Events, redirigir a la página del país
+            return `./reportajes/irl-events/${subtype}.html`;
+        } else if (type === 'digital') {
+            // Para Digital Events, redirigir a la página del idioma
+            return `./reportajes/digital-events/${subtype}.html`;
+        }
+        return null;
+    }
+
+    // Función para guardar reportaje en localStorage
+    function saveReportaje(reportaje) {
+        const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+        reportajes.push(reportaje);
+        localStorage.setItem('reportajes', JSON.stringify(reportajes));
+    }
+
     // Manejo del envío del blog
     submitBtn.addEventListener('click', () => {
         const title = document.querySelector('.blog-title').value;
@@ -99,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const subtype = secondaryFilter.value;
 
         if (!title || !content) {
-            alert('Por favor, completa el título y el contenido del blog');
+            alert('Por favor, completa el título y el contenido del reportaje');
             return;
         }
 
@@ -108,13 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Aquí iría la lógica para enviar el blog al servidor
-        console.log({
-            title,
-            content,
-            type,
-            subtype,
-            subtypeLabel: secondaryFilter.options[secondaryFilter.selectedIndex].text
-        });
+        // Crear objeto del reportaje
+        const reportaje = {
+            id: Date.now().toString(),
+            title: title,
+            content: content,
+            type: type,
+            subtype: subtype,
+            typeLabel: type === 'irl' ? 'IRL Events' : 'Digital Events',
+            subtypeLabel: secondaryFilter.options[secondaryFilter.selectedIndex].text,
+            timestamp: new Date().toISOString()
+        };
+
+        // Guardar en localStorage
+        saveReportaje(reportaje);
+
+        // Generar URL de destino
+        const targetURL = generateTargetURL(type, subtype);
+        
+        if (targetURL) {
+            // Mostrar mensaje de éxito y redirigir
+            alert('¡Reportaje enviado exitosamente! Serás redirigido a la página correspondiente.');
+            window.location.href = targetURL;
+        } else {
+            alert('Error al generar la URL de destino');
+        }
     });
 }); 

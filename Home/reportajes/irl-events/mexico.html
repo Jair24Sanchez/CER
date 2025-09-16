@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportajes IRL Events - México - CER</title>
+    <link rel="stylesheet" href="../../report-events.css">
+    <link rel="stylesheet" href="../../blog-editor.css">
+    <style>
+        .reportajes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .reportajes-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .reportajes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .reportaje-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .reportaje-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .reportaje-content {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .reportaje-meta {
+            font-size: 0.9em;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .no-reportajes {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../../Homepage.html" class="logo-link">
+            <img src="../../cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="reportajes-container">
+        <div class="reportajes-header">
+            <h1>Reportajes IRL Events - México</h1>
+            <p>Historias y reportajes de eventos presenciales en México</p>
+        </div>
+
+        <div class="reportajes-grid" id="reportajesGrid">
+            <div class="no-reportajes">
+                <p>No hay reportajes disponibles para México aún.</p>
+                <p><a href="../../reporte-por-iniciativa-propia.html">¿Quieres crear el primero?</a></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Cargar reportajes desde localStorage
+        function loadReportajes() {
+            const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+            const mexicoReportajes = reportajes.filter(r => 
+                r.type === 'irl' && r.subtype === 'mx'
+            );
+            
+            const grid = document.getElementById('reportajesGrid');
+            
+            if (mexicoReportajes.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-reportajes">
+                        <p>No hay reportajes disponibles para México aún.</p>
+                        <p><a href="../../reporte-por-iniciativa-propia.html">¿Quieres crear el primero?</a></p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = mexicoReportajes.map(reportaje => `
+                <div class="reportaje-card">
+                    <div class="reportaje-title">${reportaje.title}</div>
+                    <div class="reportaje-content">${reportaje.content}</div>
+                    <div class="reportaje-meta">
+                        <strong>Tipo:</strong> ${reportaje.typeLabel} | 
+                        <strong>País:</strong> ${reportaje.subtypeLabel} | 
+                        <strong>Fecha:</strong> ${new Date(reportaje.timestamp).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Cargar reportajes al cargar la página
+        document.addEventListener('DOMContentLoaded', loadReportajes);
+    </script>
+</body>
+</html>
