@@ -103,6 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    // Función para verificar si una página existe
+    async function checkPageExists(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD' });
+            return response.ok;
+        } catch (error) {
+            return false;
+        }
+    }
+
     // Función para guardar reportaje en localStorage
     function saveReportaje(reportaje) {
         const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
@@ -146,9 +156,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetURL = generateTargetURL(type, subtype);
         
         if (targetURL) {
-            // Mostrar mensaje de éxito y redirigir
-            alert('¡Reportaje enviado exitosamente! Serás redirigido a la página correspondiente.');
-            window.location.href = targetURL;
+            // Verificar si la página existe antes de redirigir
+            checkPageExists(targetURL).then(exists => {
+                if (exists) {
+                    // Mostrar mensaje de éxito y redirigir
+                    alert('¡Reportaje enviado exitosamente! Serás redirigido a la página correspondiente.');
+                    window.location.href = targetURL;
+                } else {
+                    // Página no existe, mostrar mensaje y redirigir a página principal
+                    alert('¡Reportaje enviado exitosamente! La página específica no está disponible aún, pero tu reportaje se ha guardado.');
+                    window.location.href = '../../Homepage.html';
+                }
+            }).catch(() => {
+                // En caso de error, redirigir a página principal
+                alert('¡Reportaje enviado exitosamente! Serás redirigido a la página principal.');
+                window.location.href = '../../Homepage.html';
+            });
         } else {
             alert('Error al generar la URL de destino');
         }
