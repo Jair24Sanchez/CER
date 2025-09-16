@@ -256,11 +256,81 @@ h1 {
     margin-left: 0.5rem;
 }
 
-footer {
-    text-align: center;
-    padding: 2rem;
-    margin-top: 4rem;
+.footer {
+width: 100%;
+position: relative;
+background-color: var(--color-white);
+height: 169px;
+overflow: hidden;
+text-align: left;
+font-size: var(--font-size-20);
+color: var(--color-black);
+font-family: var(--font-inter);
 }
+
+.footer-left {
+  text-align: center; /* 🔹 centramos el texto */
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-left p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.footer-left h2 {
+  margin: 8px auto;         /* espacio más equilibrado */
+  font-size: 22px;          /* 🔹 más pequeño */
+  font-weight: bold;
+  background: #fff;
+  padding: 4px 12px;        /* 🔹 rectángulo más pequeño */
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  display: inline-block;    /* 🔹 para que el rectángulo se ajuste al contenido */
+}
+
+.footer-left span {
+  font-size: 14px;
+  color: #333;
+}
+
+.footer-right {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 250px;
+  margin-top: 15px;
+}
+
+.footer-right img {
+  width: 28px;
+  height: auto;
+  opacity: 0.6;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.footer-right img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-right {
+    justify-content: center;
+    margin-top: 20px;
+  }
+}
+
 
 .counter {
     font-size: 2.5rem;
