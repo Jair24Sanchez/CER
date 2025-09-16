@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - CER</title>
+    <link rel="stylesheet" href="../report-events.css">
+    <link rel="stylesheet" href="../blog-editor.css">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .error-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        .error-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../Homepage.html" class="logo-link">
+            <img src="../cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="error-container">
+        <div class="error-icon">📄</div>
+        <h1 class="error-title">Página no encontrada</h1>
+        <p class="error-message">
+            La página que buscas no existe aún, pero tu reportaje se ha guardado correctamente.
+            <br><br>
+            <strong>¿Qué puedes hacer?</strong><br>
+            • Crear más reportajes<br>
+            • Explorar las páginas disponibles<br>
+            • Volver al inicio
+        </p>
+        <div class="error-actions">
+            <a href="../reporte-por-iniciativa-propia.html" class="btn btn-primary">Crear Reportaje</a>
+            <a href="../Homepage.html" class="btn btn-secondary">Volver al Inicio</a>
+        </div>
+    </main>
+
+    <script>
+        // Mostrar información del reportaje guardado si existe
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+            if (reportajes.length > 0) {
+                const ultimoReportaje = reportajes[reportajes.length - 1];
+                console.log('Último reportaje guardado:', ultimoReportaje);
+            }
+        });
+    </script>
+</body>
+</html>

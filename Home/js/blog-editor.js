@@ -103,14 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    // Función para verificar si una página existe
-    async function checkPageExists(url) {
-        try {
-            const response = await fetch(url, { method: 'HEAD' });
-            return response.ok;
-        } catch (error) {
-            return false;
-        }
+    // Función para verificar si una página existe (para archivos locales)
+    function checkPageExists(url) {
+        // Para archivos locales, simplemente redirigir y manejar el error en la página de destino
+        return true; // Siempre permitir la redirección
     }
 
     // Función para guardar reportaje en localStorage
