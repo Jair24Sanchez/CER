@@ -91,22 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    // Función para generar URL de destino basada en la selección
-    function generateTargetURL(type, subtype) {
-        if (type === 'irl') {
-            // Para IRL Events, redirigir a la página del país
-            return `./reportajes/irl-events/${subtype}.html`;
-        } else if (type === 'digital') {
-            // Para Digital Events, redirigir a la página del idioma
-            return `./reportajes/digital-events/${subtype}.html`;
-        }
-        return null;
+    // Función para generar URL de confirmación
+    function generateConfirmationURL(reportajeId) {
+        return `./reportajes/confirmacion.html?id=${reportajeId}`;
     }
 
-    // Función para verificar si una página existe (para archivos locales)
-    function checkPageExists(url) {
-        // Para archivos locales, simplemente redirigir y manejar el error en la página de destino
-        return true; // Siempre permitir la redirección
+    // Función para generar URL de categoría dinámica
+    function generateCategoryURL(type, subtype) {
+        return `./reportajes/categoria.html?type=${type}&subtype=${subtype}`;
     }
 
     // Función para guardar reportaje en localStorage
@@ -148,28 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Guardar en localStorage
         saveReportaje(reportaje);
 
-        // Generar URL de destino
-        const targetURL = generateTargetURL(type, subtype);
+        // Generar URL de confirmación
+        const confirmationURL = generateConfirmationURL(reportaje.id);
         
-        if (targetURL) {
-            // Verificar si la página existe antes de redirigir
-            checkPageExists(targetURL).then(exists => {
-                if (exists) {
-                    // Mostrar mensaje de éxito y redirigir
-                    alert('¡Reportaje enviado exitosamente! Serás redirigido a la página correspondiente.');
-                    window.location.href = targetURL;
-                } else {
-                    // Página no existe, mostrar mensaje y redirigir a página principal
-                    alert('¡Reportaje enviado exitosamente! La página específica no está disponible aún, pero tu reportaje se ha guardado.');
-                    window.location.href = '../../Homepage.html';
-                }
-            }).catch(() => {
-                // En caso de error, redirigir a página principal
-                alert('¡Reportaje enviado exitosamente! Serás redirigido a la página principal.');
-                window.location.href = '../../Homepage.html';
-            });
-        } else {
-            alert('Error al generar la URL de destino');
-        }
+        // Redirigir a página de confirmación
+        window.location.href = confirmationURL;
     });
 }); 

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportaje Enviado - CER</title>
+    <link rel="stylesheet" href="../report-events.css">
+    <link rel="stylesheet" href="../blog-editor.css">
+    <style>
+        .confirmacion-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 4em;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .confirmacion-title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .confirmacion-subtitle {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .reportaje-preview {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+            border-left: 4px solid #007bff;
+        }
+        .reportaje-preview h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .reportaje-preview .content {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .reportaje-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.9em;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .meta-badge {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .acciones {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .countdown {
+            margin-top: 20px;
+            color: #666;
+            font-style: italic;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../Homepage.html" class="logo-link">
+            <img src="../cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="confirmacion-container">
+        <div class="success-icon">✅</div>
+        <h1 class="confirmacion-title">¡Reportaje Enviado!</h1>
+        <p class="confirmacion-subtitle">Tu reportaje ha sido guardado exitosamente</p>
+
+        <div class="reportaje-preview" id="reportajePreview">
+            <h3 id="reportajeTitulo">Cargando...</h3>
+            <div class="content" id="reportajeContenido">Cargando contenido...</div>
+            <div class="reportaje-meta">
+                <div class="meta-item">
+                    <span class="meta-badge" id="reportajeTipo">Tipo</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-badge" id="reportajeSubtipo">Subtipo</span>
+                </div>
+                <div class="meta-item">
+                    <span>📅</span>
+                    <span id="reportajeFecha">Fecha</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <a href="../reporte-por-iniciativa-propia.html" class="btn btn-primary">
+                📝 Crear Otro Reportaje
+            </a>
+            <a href="../Homepage.html" class="btn btn-secondary">
+                🏠 Volver al Inicio
+            </a>
+            <a href="#" id="verCategoria" class="btn btn-success">
+                👁️ Ver en Categoría
+            </a>
+        </div>
+
+        <div class="countdown" id="countdown">
+            Serás redirigido automáticamente en <span id="timer">5</span> segundos...
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Redirigiendo a la categoría...</p>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const reportajeId = urlParams.get('id');
+            
+            // Cargar reportaje desde localStorage
+            const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+            const reportaje = reportajes.find(r => r.id === reportajeId);
+            
+            if (reportaje) {
+                // Mostrar información del reportaje
+                document.getElementById('reportajeTitulo').textContent = reportaje.title;
+                document.getElementById('reportajeContenido').innerHTML = reportaje.content;
+                document.getElementById('reportajeTipo').textContent = reportaje.typeLabel;
+                document.getElementById('reportajeSubtipo').textContent = reportaje.subtypeLabel;
+                document.getElementById('reportajeFecha').textContent = new Date(reportaje.timestamp).toLocaleDateString();
+                
+                // Configurar enlace a categoría
+                const categoriaUrl = `./categoria.html?type=${reportaje.type}&subtype=${reportaje.subtype}`;
+                document.getElementById('verCategoria').href = categoriaUrl;
+                
+                // Iniciar countdown para redirección automática
+                let countdown = 5;
+                const timerElement = document.getElementById('timer');
+                const countdownElement = document.getElementById('countdown');
+                const loadingElement = document.getElementById('loading');
+                
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    timerElement.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        countdownElement.style.display = 'none';
+                        loadingElement.style.display = 'block';
+                        
+                        // Redirigir después de 1 segundo
+                        setTimeout(() => {
+                            window.location.href = categoriaUrl;
+                        }, 1000);
+                    }
+                }, 1000);
+                
+            } else {
+                // Reportaje no encontrado
+                document.getElementById('reportajeTitulo').textContent = 'Reportaje no encontrado';
+                document.getElementById('reportajeContenido').textContent = 'El reportaje solicitado no pudo ser encontrado.';
+                document.getElementById('countdown').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
