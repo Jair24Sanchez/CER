@@ -342,7 +342,7 @@
             });
             
             grid.innerHTML = sortedReportajes.map(reportaje => `
-                <div class="reportaje-card">
+                <div class="reportaje-card" onclick="window.location.href='./leer.html?id=${reportaje.id}'" style="cursor: pointer;">
                     <div class="reportaje-title">${reportaje.title}</div>
                     <div class="reportaje-content">${reportaje.content}</div>
                     <div class="reportaje-meta">

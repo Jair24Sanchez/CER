@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const secondaryFilter = document.getElementById('secondaryFilter');
     const timeFrameSelect = document.getElementById('timeFrame');
     const mainEventsList = document.getElementById('mainEventsList');
+    const goToCategoryBtn = document.getElementById('goToCategory');
 
     // Función para actualizar el segundo filtro basado en la selección del tipo de evento
     function updateSecondaryFilter() {
@@ -35,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Actualizar eventos mostrados
         loadEvents();
+        
+        // Actualizar estado del botón "Ir"
+        updateGoButton();
     }
 
     // Función para cargar eventos basados en los filtros
@@ -93,11 +97,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Función para actualizar el estado del botón "Ir"
+    function updateGoButton() {
+        const eventType = eventTypeSelect.value;
+        const filterValue = secondaryFilter.value;
+        
+        if (eventType && filterValue) {
+            goToCategoryBtn.disabled = false;
+        } else {
+            goToCategoryBtn.disabled = true;
+        }
+    }
+    
+    // Función para navegar a la categoría
+    function goToCategory() {
+        const eventType = eventTypeSelect.value;
+        const filterValue = secondaryFilter.value;
+        
+        if (eventType && filterValue) {
+            const categoryUrl = `./reportajes/categoria.html?type=${eventType}&subtype=${filterValue}`;
+            window.location.href = categoryUrl;
+        }
+    }
+
     // Event listeners
     eventTypeSelect.addEventListener('change', updateSecondaryFilter);
-    secondaryFilter.addEventListener('change', loadEvents);
+    secondaryFilter.addEventListener('change', () => {
+        loadEvents();
+        updateGoButton();
+    });
     if (timeFrameSelect) {
         timeFrameSelect.addEventListener('change', loadEvents);
+    }
+    if (goToCategoryBtn) {
+        goToCategoryBtn.addEventListener('click', goToCategory);
     }
 
     // Inicializar filtros y cargar eventos iniciales

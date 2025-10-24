@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leer Reportaje - CER</title>
+    <link rel="stylesheet" href="../report-events.css">
+    <link rel="stylesheet" href="../blog-editor.css">
+    <style>
+        .reportaje-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .reportaje-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+        }
+        .reportaje-title {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        .reportaje-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .meta-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+        .meta-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .reportaje-content {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .reportaje-content h1,
+        .reportaje-content h2,
+        .reportaje-content h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .reportaje-content p {
+            margin-bottom: 20px;
+        }
+        .reportaje-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .acciones {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #dc3545;
+        }
+        .error h2 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../Homepage.html" class="logo-link">
+            <img src="../cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="reportaje-container">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="../Homepage.html">Inicio</a> > 
+            <a href="#" id="breadcrumbCategoria">Categoría</a> > 
+            <span>Leer Reportaje</span>
+        </div>
+
+        <div id="loading" class="loading">
+            <h2>Cargando reportaje...</h2>
+            <p>Por favor espera mientras cargamos el contenido.</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;">
+            <h2>Reportaje no encontrado</h2>
+            <p>El reportaje que buscas no existe o ha sido eliminado.</p>
+            <div class="acciones">
+                <a href="../Homepage.html" class="btn btn-primary">🏠 Volver al Inicio</a>
+                <a href="../reporte-por-iniciativa-propia.html" class="btn btn-success">📝 Crear Reportaje</a>
+            </div>
+        </div>
+
+        <div id="reportajeContent" style="display: none;">
+            <div class="reportaje-header">
+                <h1 class="reportaje-title" id="reportajeTitulo">Título del Reportaje</h1>
+                <div class="reportaje-meta">
+                    <span class="meta-badge" id="reportajeTipo">Tipo</span>
+                    <span class="meta-badge" id="reportajeSubtipo">Subtipo</span>
+                    <div class="meta-date">
+                        <span>📅</span>
+                        <span id="reportajeFecha">Fecha</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reportaje-content" id="reportajeContenido">
+                Contenido del reportaje...
+            </div>
+
+            <div class="acciones">
+                <a href="#" id="volverCategoria" class="btn btn-primary">
+                    ← Volver a Categoría
+                </a>
+                <a href="../reporte-por-iniciativa-propia.html" class="btn btn-success">
+                    📝 Crear Otro Reportaje
+                </a>
+                <a href="../Homepage.html" class="btn btn-secondary">
+                    🏠 Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const reportajeId = urlParams.get('id');
+            
+            if (!reportajeId) {
+                showError();
+                return;
+            }
+            
+            // Cargar reportaje desde localStorage
+            const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+            const reportaje = reportajes.find(r => r.id === reportajeId);
+            
+            if (!reportaje) {
+                showError();
+                return;
+            }
+            
+            // Mostrar reportaje
+            showReportaje(reportaje);
+        });
+        
+        function showReportaje(reportaje) {
+            // Ocultar loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Mostrar contenido
+            document.getElementById('reportajeContent').style.display = 'block';
+            
+            // Llenar información
+            document.getElementById('reportajeTitulo').textContent = reportaje.title;
+            document.getElementById('reportajeContenido').innerHTML = reportaje.content;
+            document.getElementById('reportajeTipo').textContent = reportaje.typeLabel;
+            document.getElementById('reportajeSubtipo').textContent = reportaje.subtypeLabel;
+            document.getElementById('reportajeFecha').textContent = new Date(reportaje.timestamp).toLocaleDateString();
+            
+            // Configurar breadcrumb
+            const categoriaUrl = `./categoria.html?type=${reportaje.type}&subtype=${reportaje.subtype}`;
+            document.getElementById('breadcrumbCategoria').href = categoriaUrl;
+            document.getElementById('breadcrumbCategoria').textContent = `${reportaje.typeLabel} - ${reportaje.subtypeLabel}`;
+            
+            // Configurar botón volver a categoría
+            document.getElementById('volverCategoria').href = categoriaUrl;
+            
+            // Actualizar título de la página
+            document.title = `${reportaje.title} - CER`;
+        }
+        
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
