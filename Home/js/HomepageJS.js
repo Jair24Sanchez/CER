@@ -119,6 +119,54 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = categoryUrl;
         }
     }
+    
+    // Función para cargar los últimos eventos
+    function loadLatestEvents() {
+        const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+        const latestEventsList = document.getElementById('latestEventsList');
+        
+        if (!latestEventsList) return;
+        
+        // Ordenar por fecha más reciente y tomar los últimos 10
+        const latestReportajes = reportajes
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 10);
+        
+        if (latestReportajes.length === 0) {
+            latestEventsList.innerHTML = `
+                <div class="event-item">
+                    <h3>No hay eventos aún</h3>
+                    <p>¡Sé el primero en crear un reportaje!</p>
+                    <div class="event-meta">
+                        <span class="event-date">-</span>
+                        <a href="./reporte-por-iniciativa-propia.html" class="event-category">Crear Reportaje</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        latestEventsList.innerHTML = latestReportajes.map(reportaje => `
+            <div class="event-item" onclick="window.location.href='./reportajes/leer.html?id=${reportaje.id}'">
+                <h3>${reportaje.title}</h3>
+                <p>${reportaje.content.replace(/<[^>]*>/g, '').substring(0, 100)}${reportaje.content.length > 100 ? '...' : ''}</p>
+                <div class="event-meta">
+                    <span class="event-date">${new Date(reportaje.timestamp).toLocaleDateString()}</span>
+                    <span class="event-category">${reportaje.typeLabel} - ${reportaje.subtypeLabel}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // Función para actualizar el contador total de eventos
+    function updateTotalEventsCounter() {
+        const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+        const totalEventsElement = document.getElementById('totalEvents');
+        
+        if (totalEventsElement) {
+            totalEventsElement.textContent = reportajes.length.toLocaleString();
+        }
+    }
 
     // Event listeners
     eventTypeSelect.addEventListener('change', updateSecondaryFilter);
@@ -135,6 +183,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar filtros y cargar eventos iniciales
     updateSecondaryFilter();
+    
+    // Cargar últimos eventos y contador
+    loadLatestEvents();
+    updateTotalEventsCounter();
 
     // MODAL CREATE
     const createBtn = document.querySelector('.create-btn');
