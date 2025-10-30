@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte por iniciativa propia - CER</title>
+    <title>Realizar reportaje - CER</title>
     <link rel="stylesheet" href="./report-events.css">
     <link rel="stylesheet" href="./blog-editor.css">
 </head>
@@ -48,8 +48,8 @@
 
     <main class="blog-editor">
         <div class="blog-container">
-            <!-- Título del blog -->
-            <input type="text" class="blog-title" placeholder="Escribe el título de tu blog">
+            <!-- Título del blog (bloqueado) -->
+            <input type="text" class="blog-title" id="lockedTitle" placeholder="Título del evento" disabled style="background: #f5f5f5;">
 
             <div class="blog-meta">
                 <!-- Sección de etiquetas -->
@@ -66,16 +66,21 @@
                     </div>
                 </div>
 
-                <!-- Filtros -->
+                <!-- Filtros (bloqueados) -->
                 <div class="filters">
-                    <select id="eventType" class="filter-select">
+                    <select id="eventType" class="filter-select" disabled style="background: #f5f5f5;">
                         <option value="irl">IRL Events</option>
                         <option value="digital">Digital Events</option>
                     </select>
-                    <select id="secondaryFilter" class="filter-select">
+                    <select id="secondaryFilter" class="filter-select" disabled style="background: #f5f5f5;">
                         <!-- Se llenará dinámicamente con JavaScript -->
                     </select>
                 </div>
+            </div>
+
+            <!-- Ubicación bloqueada -->
+            <div class="filters" style="margin-bottom: 1.5rem;">
+                <input id="lockedLocation" class="filter-select" placeholder="Ubicación" disabled style="background: #f5f5f5;">
             </div>
 
             <!-- Herramientas de edición -->
@@ -95,7 +100,7 @@
             <div class="blog-content" contenteditable="true" placeholder="Escribe sobre tu reportaje aquí..."></div>
 
             <!-- Botón de envío -->
-            <button class="submit-btn">Enviar</button>
+            <button class="submit-btn" id="submitReportBtn">Enviar</button>
         </div>
     </main>
 
@@ -105,5 +110,80 @@
     <script src="./js/modal-create.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="./js/login.js"></script>
+    <script>
+    (function(){
+        // Cargar evento bloqueado por id
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        const events = JSON.parse(localStorage.getItem('requestedEvents')||'[]');
+        const ev = events.find(e=>e.id===id);
+        if(!ev){
+            alert('No se encontró el evento.');
+            window.location.href = './report-events.html';
+            return;
+        }
+        
+        // Rellenar y bloquear meta
+        document.getElementById('lockedTitle').value = ev.title;
+        const typeSel = document.getElementById('eventType');
+        const subSel = document.getElementById('secondaryFilter');
+        typeSel.value = ev.type;
+        
+        // poblar subtipos
+        const list = ev.type==='irl'?window.countriesList:window.languagesList;
+        subSel.innerHTML = '';
+        list.forEach(opt=>{
+            const o=document.createElement('option');
+            o.value = opt.code.toLowerCase();
+            o.textContent = opt.name;
+            subSel.appendChild(o);
+        });
+        subSel.value = ev.subtype.toLowerCase();
+        document.getElementById('lockedLocation').value = ev.location;
+
+        // Mostrar badges con datos del evento bloqueado
+        (function(){
+            const typeBadge = document.getElementById('tagTypeLabel');
+            const subtypeBadge = document.getElementById('tagSubtypeLabel');
+            if(typeBadge){ typeBadge.textContent = ev.typeLabel; typeBadge.style.display='inline-block'; }
+            if(subtypeBadge){ subtypeBadge.textContent = ev.subtypeLabel; subtypeBadge.style.display='inline-block'; }
+        })();
+
+        // Envío: guardar como reportaje realizado y vincular al evento
+        document.getElementById('submitReportBtn').addEventListener('click', function(){
+            const content = document.querySelector('.blog-content').innerHTML.trim();
+            if(!content){
+                alert('Escribe el contenido del reportaje.');
+                return;
+            }
+            const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            const report = {
+                id: Date.now().toString(),
+                requestId: ev.id,
+                title: ev.title,
+                content,
+                type: ev.type,
+                subtype: ev.subtype,
+                typeLabel: ev.typeLabel,
+                subtypeLabel: ev.subtypeLabel,
+                author: 'reporter',
+                rewardType: ev.rewardType,
+                rewardAmount: ev.rewardAmount,
+                createdAt: new Date().toISOString()
+            };
+            completed.push(report);
+            localStorage.setItem('completedReports', JSON.stringify(completed));
+
+            // actualizar estado del requestedEvent a 'espera' o 'edicion'
+            ev.status = 'espera';
+            localStorage.setItem('requestedEvents', JSON.stringify(events));
+
+            // Redirigir a organize con ancla a review
+            window.location.href = './organize.html#review';
+        });
+    })();
+    </script>
 </body>
-</html> 
+</html>
+
+

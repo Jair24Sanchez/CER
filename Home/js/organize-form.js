@@ -424,8 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // También guardar en eventSummary para compatibilidad
             localStorage.setItem('eventSummary', JSON.stringify(eventData));
             
-            // Redirigir a la página de resumen
-            window.location.href = './event-summary.html';
+            // Redirigir a la página de report-events para ver los eventos solicitados
+            window.location.href = './report-events.html';
         });
     }
 }); 

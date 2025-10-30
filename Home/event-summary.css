@@ -1,3 +1,27 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f5;
+    color: #222;
+    margin: 0;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem 1rem 2rem;
+    background: #fff;
+}
+
+.logo-link {
+    text-decoration: none;
+    display: block;
+}
+
+.logo {
+    height: 48px;
+}
+
 .summary-container {
     max-width: 700px;
     margin: 40px auto;
@@ -7,41 +31,44 @@
     padding: 32px 24px;
     font-family: 'Inter', Arial, sans-serif;
 }
+
 .summary-title {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 24px;
     text-align: center;
 }
-.summary-row {
-    display: flex;
-    gap: 24px;
-    justify-content: space-between;
+
+.summary-section {
     margin-bottom: 20px;
 }
-.summary-organizer, .summary-subtype, .summary-reporters, .summary-reward {
-    background: #F5F5F5;
-    border-radius: 10px;
-    padding: 12px 18px;
-    min-width: 120px;
-    text-align: center;
-    font-size: 1rem;
+
+.section-label {
+    background: #e5e5e5;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 4px 4px 0 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0;
 }
-.summary-description {
-    margin: 24px 0 12px 0;
+
+.section-content {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
     padding: 16px;
-    background: #FAFAFA;
-    border-radius: 10px;
-    font-size: 1.1rem;
-}
-.summary-datetime, .summary-location {
-    margin-bottom: 12px;
     font-size: 1rem;
+    line-height: 1.5;
+    min-height: 60px;
 }
+
 .summary-location a {
     color: #0077cc;
     text-decoration: underline;
 }
+
 .summary-apply-btn {
     display: block;
     width: 100%;
@@ -56,6 +83,7 @@
     cursor: pointer;
     transition: background 0.2s;
 }
+
 .summary-apply-btn:hover {
     background: #e0e0e0;
 } 

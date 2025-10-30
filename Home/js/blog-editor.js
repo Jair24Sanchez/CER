@@ -37,7 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listeners para filtros
-    eventTypeSelect.addEventListener('change', updateSecondaryFilter);
+    eventTypeSelect.addEventListener('change', () => {
+        updateSecondaryFilter();
+        updateSelectedTags();
+    });
     updateSecondaryFilter();
 
     // Funcionalidad de las herramientas de edición
@@ -69,6 +72,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
     });
+
+    // Mostrar badges de etiquetas seleccionadas
+    function updateSelectedTags() {
+        const typeBadge = document.getElementById('tagTypeLabel');
+        const subtypeBadge = document.getElementById('tagSubtypeLabel');
+        if (!typeBadge || !subtypeBadge) return;
+
+        const typeLabel = eventTypeSelect.value === 'irl' ? 'IRL Events' : 'Digital Events';
+        const subtypeOption = secondaryFilter.options[secondaryFilter.selectedIndex];
+        const subtypeLabel = subtypeOption ? subtypeOption.text : '';
+
+        typeBadge.textContent = typeLabel;
+        typeBadge.style.display = 'inline-block';
+        if (secondaryFilter.value) {
+            subtypeBadge.textContent = subtypeLabel;
+            subtypeBadge.style.display = 'inline-block';
+        } else {
+            subtypeBadge.style.display = 'none';
+        }
+    }
+
+    secondaryFilter.addEventListener('change', updateSelectedTags);
+    // Inicializa badges después de poblar opciones
+    setTimeout(updateSelectedTags, 0);
 
     // Manejo de carga de imágenes
     imageUpload.addEventListener('change', (e) => {

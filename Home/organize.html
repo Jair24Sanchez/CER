@@ -34,7 +34,15 @@
                 <span class="organize-step">1</span>
                 <span class="organize-text">Organize reports</span>
             </div>
-            <button class="organize-btn">2</button>
+            <button class="organize-btn" id="step2Btn">2</button>
+        </div>
+        
+        <!-- Barra para el paso 2 -->
+        <div class="organize-title" id="step2Title" style="display:none;">
+            <div class="organize-center-group">
+                <span class="organize-step">2</span>
+                <span class="organize-text">Revisa y Publica los reportajes realizados</span>
+            </div>
         </div>
     </div>
 
@@ -103,11 +111,110 @@
                 <button type="submit" class="submit-btn-final">Solicita reportaje</button>
             </form>
         </div>
+        <!-- Review subpage -->
+        <section id="reviewSection" style="display:none; max-width:1200px; margin:40px auto;">
+            <h2 style="text-align:center; margin-bottom:16px;">2 Review and publish the reports made</h2>
+            <div id="completedGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;"></div>
+        </section>
     </main>
 
     <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
     <script src="./js/modal-create.js"></script>
     <script src="./js/organize-form.js"></script>
+    <script>
+    (function(){
+        const step2Btn = document.getElementById('step2Btn');
+        const step1Title = document.querySelector('.organize-title');
+        const step2Title = document.getElementById('step2Title');
+        const reviewSection = document.getElementById('reviewSection');
+        const formRow = document.querySelector('.organize-form-row');
+        const completedGrid = document.getElementById('completedGrid');
+
+        function renderCompleted(){
+            const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            completedGrid.innerHTML = '';
+            if(completed.length===0){
+                completedGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#666;">No hay reportajes enviados aún</div>';
+                return;
+            }
+            completed.forEach(r=>{
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.style.background = '#fff';
+                card.style.borderRadius = '16px';
+                card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
+                card.style.padding = '12px';
+                card.innerHTML = `
+                    <div class="request-content">
+                        <h3 class="request-title" style="margin:0 0 8px 0;">${r.title}</h3>
+                        <div class="request-meta" style="display:flex; gap:8px; color:#666; font-size:.95rem;">
+                            <span>${r.typeLabel}</span>
+                            <span class="request-subtype">${r.subtypeLabel}</span>
+                        </div>
+                        <div class="request-description" style="margin-top:8px; color:#333;">
+                            ${r.content.replace(/<[^>]*>/g,'').slice(0,120)}...
+                        </div>
+                        <div class="request-actions" style="margin-top:12px; display:flex; gap:8px;">
+                            <button class="btn-view" onclick="(function(id){ localStorage.setItem('previewReportId', id); window.location.href='./reportajes/leer.html?id='+id; })('${r.id}')">Ver</button>
+                            <button class="btn-apply" onclick="(function(id){ publishReport(id); })('${r.id}')">Publicar</button>
+                        </div>
+                    </div>`;
+                completedGrid.appendChild(card);
+            });
+        }
+
+        window.publishReport = function(id){
+            const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            const report = completed.find(r=>r.id===id);
+            if(!report) return;
+            // mover a reportajes publicados (reusa almacenamiento existente "reportajes")
+            const published = JSON.parse(localStorage.getItem('reportajes')||'[]');
+            published.push({
+                id: report.id,
+                title: report.title,
+                content: report.content,
+                type: report.type,
+                subtype: report.subtype,
+                typeLabel: report.typeLabel,
+                subtypeLabel: report.subtypeLabel,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('reportajes', JSON.stringify(published));
+
+            // actualizar requestedEvent a 'edicion' -> 'publicado'
+            const reqs = JSON.parse(localStorage.getItem('requestedEvents')||'[]');
+            const req = reqs.find(e=>e.id===report.requestId);
+            if(req){ req.status = 'publicado'; localStorage.setItem('requestedEvents', JSON.stringify(reqs)); }
+
+            // quitar de completed
+            localStorage.setItem('completedReports', JSON.stringify(completed.filter(r=>r.id!==id)));
+            renderCompleted();
+            alert('Reportaje publicado');
+        }
+
+        function showReview(){
+            step1Title.style.display = 'none';
+            step2Title.style.display = 'flex';
+            formRow.style.display = 'none';
+            reviewSection.style.display = 'block';
+            renderCompleted();
+        }
+
+        function showStep1(){
+            step1Title.style.display = 'flex';
+            step2Title.style.display = 'none';
+            formRow.style.display = 'flex';
+            reviewSection.style.display = 'none';
+        }
+
+        step2Btn.addEventListener('click', showReview);
+        if (window.location.hash === '#review') { 
+            showReview(); 
+        } else {
+            showStep1();
+        }
+    })();
+    </script>
 </body>
 </html> 

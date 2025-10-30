@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSecondaryFilter();
     
     // Event listeners para filtros
-    const secondaryFilter = document.getElementById('secondaryFilter');
     const statusFilter = document.getElementById('statusFilter');
     const orderFilter = document.getElementById('orderFilter');
     
@@ -85,10 +84,20 @@ function loadRequestedEvents() {
     const order = orderFilter.value;
     switch (order) {
         case 'mayor-recompensa':
-            filteredEvents.sort((a, b) => (b.rewardAmount || 0) - (a.rewardAmount || 0));
+            // Ordenar de mayor recompensa a menor (voluntario al final)
+            filteredEvents.sort((a, b) => {
+                const aAmount = a.rewardType === 'voluntario' ? 0 : (a.rewardAmount || 0);
+                const bAmount = b.rewardType === 'voluntario' ? 0 : (b.rewardAmount || 0);
+                return bAmount - aAmount;
+            });
             break;
         case 'menor-recompensa':
-            filteredEvents.sort((a, b) => (a.rewardAmount || 0) - (b.rewardAmount || 0));
+            // Ordenar de voluntario a mayor recompensa
+            filteredEvents.sort((a, b) => {
+                const aAmount = a.rewardType === 'voluntario' ? 0 : (a.rewardAmount || 0);
+                const bAmount = b.rewardType === 'voluntario' ? 0 : (b.rewardAmount || 0);
+                return aAmount - bAmount;
+            });
             break;
         case 'relevancia':
         default:
@@ -115,36 +124,38 @@ function createEventCard(event) {
     const card = document.createElement('div');
     card.className = 'request-card';
     card.innerHTML = `
-        <div class="request-header">
-            <h3 class="request-title">${event.title}</h3>
-            <span class="request-status status-${event.status}">${getStatusLabel(event.status)}</span>
-        </div>
-        <div class="request-meta">
-            <span class="request-type">${event.typeLabel}</span>
-            <span class="request-subtype">${event.subtypeLabel}</span>
-            <span class="request-date">${new Date(event.startDate).toLocaleDateString()}</span>
-        </div>
-        <div class="request-description">
-            ${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}
-        </div>
-        <div class="request-footer">
-            <div class="request-reward">
-                ${event.rewardType === 'recompensa' ? 
-                    `<span class="reward-amount">$${event.rewardAmount}</span>` : 
-                    '<span class="reward-volunteer">Voluntario</span>'
-                }
+        <div class="request-content">
+            <div class="request-header">
+                <h3 class="request-title">${event.title}</h3>
+                <span class="request-status status-${event.status}">${getStatusLabel(event.status)}</span>
             </div>
-            <div class="request-reporters">
-                ${event.reporters} reportero${event.reporters > 1 ? 's' : ''}
+            <div class="request-meta">
+                <span class="request-type">${event.typeLabel}</span>
+                <span class="request-subtype">${event.subtypeLabel}</span>
+                <span class="request-date">${new Date(event.startDate).toLocaleDateString()}</span>
             </div>
-        </div>
-        <div class="request-actions">
-            <button class="btn-apply" onclick="applyToEvent('${event.id}')">
-                Aplicar
-            </button>
-            <button class="btn-view" onclick="viewEventDetails('${event.id}')">
-                Ver detalles
-            </button>
+            <div class="request-description">
+                ${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}
+            </div>
+            <div class="request-footer">
+                <div class="request-reward">
+                    ${event.rewardType === 'recompensa' ? 
+                        `<span class="reward-amount">$${event.rewardAmount.toLocaleString()}</span>` : 
+                        '<span class="reward-volunteer">Voluntario</span>'
+                    }
+                </div>
+                <div class="request-reporters">
+                    ${event.reporters} reportero${event.reporters > 1 ? 's' : ''}
+                </div>
+            </div>
+            <div class="request-actions">
+                <button class="btn-apply" onclick="applyToEvent('${event.id}')">
+                    Aplicar
+                </button>
+                <button class="btn-view" onclick="viewEventDetails('${event.id}')">
+                    Ver detalles
+                </button>
+            </div>
         </div>
     `;
     return card;
@@ -165,7 +176,8 @@ function getStatusLabel(status) {
 
 // Función para aplicar a un evento
 function applyToEvent(eventId) {
-    alert(`Aplicando al evento ${eventId}. Esta funcionalidad se implementará próximamente.`);
+    // Redirigir al editor de reportes con el id del evento solicitado
+    window.location.href = `./report-editor.html?id=${encodeURIComponent(eventId)}`;
 }
 
 // Función para ver detalles del evento
@@ -173,8 +185,10 @@ function viewEventDetails(eventId) {
     const events = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
     const event = events.find(e => e.id === eventId);
     if (event) {
-        // Aquí podrías abrir un modal o redirigir a una página de detalles
-        alert(`Detalles del evento: ${event.title}\n\nDescripción: ${event.description}\n\nUbicación: ${event.location}`);
+        // Guardar el evento seleccionado para mostrar en event-summary
+        localStorage.setItem('eventSummary', JSON.stringify(event));
+        // Redirigir a la página de detalles
+        window.location.href = './event-summary.html';
     }
 }
 

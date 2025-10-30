@@ -7,19 +7,30 @@
     <link rel="stylesheet" href="./event-summary.css">
 </head>
 <body>
+    <header class="main-header">
+        <a href="./Homepage.html" class="logo-link">
+            <img src="./cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+    </header>
+    
     <div class="summary-container">
         <h1 id="summary-title" class="summary-title"></h1>
-        <div class="summary-row">
-            <div class="summary-organizer" id="summary-organizer">
-                <!-- Aquí va el perfil del organizador -->
-            </div>
-            <div class="summary-subtype" id="summary-subtype"></div>
-            <div class="summary-reporters" id="summary-reporters"></div>
-            <div class="summary-reward" id="summary-reward"></div>
+        
+        <div class="summary-section">
+            <div class="section-label">Descripción</div>
+            <div class="section-content" id="summary-description"></div>
         </div>
-        <div class="summary-description" id="summary-description"></div>
-        <div class="summary-datetime" id="summary-datetime"></div>
-        <div class="summary-location" id="summary-location"></div>
+        
+        <div class="summary-section">
+            <div class="section-label">Fecha y horario</div>
+            <div class="section-content" id="summary-datetime"></div>
+        </div>
+        
+        <div class="summary-section">
+            <div class="section-label">Ubicación</div>
+            <div class="section-content" id="summary-location"></div>
+        </div>
+        
         <button class="summary-apply-btn">Aplicar</button>
     </div>
     <script src="./js/event-summary.js"></script>
