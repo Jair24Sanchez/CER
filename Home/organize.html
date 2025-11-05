@@ -11,10 +11,30 @@
     <!-- Modal CREATE -->
     <div id="createModal" class="modal-create">
         <div class="modal-create-content">
-            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo">
             <div class="modal-create-title"><em>CREATE</em></div>
             <a href="./report-events.html" class="modal-create-btn">Reports</a>
-            <button class="modal-create-btn">Organize</button>
+            <a href="./organize.html" class="modal-create-btn">Organize</a>
+        </div>
+    </div>
+
+    <!-- Modal LOGIN -->
+    <div id="loginModal" class="modal-create" style="display:none;">
+        <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
+            <div class="modal-create-title" style="margin:0;">LOGIN</div>
+            <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
+            <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
+            <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
+            <div style="margin:8px 0; font-weight:600;">o</div>
+            <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
+            <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
+            <div class="wallet-grid">
+                <button id="metamaskBtn" class="modal-create-btn">MetaMask</button>
+                <button id="coinbaseBtn" class="modal-create-btn">Coinbase Wallet</button>
+                <button id="rabbyBtn" class="modal-create-btn">Rabby</button>
+                <button id="walletConnectBtn" class="modal-create-btn">WalletConnect</button>
+            </div>
         </div>
     </div>
 
@@ -29,7 +49,7 @@
     </header>
 
     <div class="title-bar">
-        <div class="organize-title">
+        <div class="organize-title" id="step1Title">
             <div class="organize-center-group">
                 <span class="organize-step">1</span>
                 <span class="organize-text">Organize reports</span>
@@ -39,6 +59,7 @@
         
         <!-- Barra para el paso 2 -->
         <div class="organize-title" id="step2Title" style="display:none;">
+            <button class="organize-btn organize-btn-left" id="step1BtnAlt">1</button>
             <div class="organize-center-group">
                 <span class="organize-step">2</span>
                 <span class="organize-text">Revisa y Publica los reportajes realizados</span>
@@ -113,7 +134,6 @@
         </div>
         <!-- Review subpage -->
         <section id="reviewSection" style="display:none; max-width:1200px; margin:40px auto;">
-            <h2 style="text-align:center; margin-bottom:16px;">2 Review and publish the reports made</h2>
             <div id="completedGrid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;"></div>
         </section>
     </main>
@@ -121,6 +141,8 @@
     <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
     <script src="./js/modal-create.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="./js/login.js"></script>
     <script src="./js/organize-form.js"></script>
     <script>
     (function(){
@@ -151,47 +173,19 @@
                         <div class="request-meta" style="display:flex; gap:8px; color:#666; font-size:.95rem;">
                             <span>${r.typeLabel}</span>
                             <span class="request-subtype">${r.subtypeLabel}</span>
+                            ${r.author ? `<span style="margin-left:auto; color:#444;">Autor: ${r.author}</span>` : ''}
                         </div>
                         <div class="request-description" style="margin-top:8px; color:#333;">
                             ${r.content.replace(/<[^>]*>/g,'').slice(0,120)}...
                         </div>
                         <div class="request-actions" style="margin-top:12px; display:flex; gap:8px;">
-                            <button class="btn-view" onclick="(function(id){ localStorage.setItem('previewReportId', id); window.location.href='./reportajes/leer.html?id='+id; })('${r.id}')">Ver</button>
-                            <button class="btn-apply" onclick="(function(id){ publishReport(id); })('${r.id}')">Publicar</button>
+                            <button class="btn-view" onclick="(function(id){ localStorage.setItem('previewReportId', id); localStorage.setItem('fromCompletedReports', 'true'); window.location.href='./reportajes/leer.html?id='+id; })('${r.id}')">Ver</button>
                         </div>
                     </div>`;
                 completedGrid.appendChild(card);
             });
         }
 
-        window.publishReport = function(id){
-            const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
-            const report = completed.find(r=>r.id===id);
-            if(!report) return;
-            // mover a reportajes publicados (reusa almacenamiento existente "reportajes")
-            const published = JSON.parse(localStorage.getItem('reportajes')||'[]');
-            published.push({
-                id: report.id,
-                title: report.title,
-                content: report.content,
-                type: report.type,
-                subtype: report.subtype,
-                typeLabel: report.typeLabel,
-                subtypeLabel: report.subtypeLabel,
-                timestamp: new Date().toISOString()
-            });
-            localStorage.setItem('reportajes', JSON.stringify(published));
-
-            // actualizar requestedEvent a 'edicion' -> 'publicado'
-            const reqs = JSON.parse(localStorage.getItem('requestedEvents')||'[]');
-            const req = reqs.find(e=>e.id===report.requestId);
-            if(req){ req.status = 'publicado'; localStorage.setItem('requestedEvents', JSON.stringify(reqs)); }
-
-            // quitar de completed
-            localStorage.setItem('completedReports', JSON.stringify(completed.filter(r=>r.id!==id)));
-            renderCompleted();
-            alert('Reportaje publicado');
-        }
 
         function showReview(){
             step1Title.style.display = 'none';
@@ -209,6 +203,10 @@
         }
 
         step2Btn.addEventListener('click', showReview);
+        document.getElementById('step1BtnAlt').addEventListener('click', showStep1);
+        
+        // El botón "1" en el paso 1 no necesita hacer nada, ya estamos en el paso 1
+        // Pero lo dejamos por consistencia visual
         if (window.location.hash === '#review') { 
             showReview(); 
         } else {

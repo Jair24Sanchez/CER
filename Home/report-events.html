@@ -10,10 +10,30 @@
     <!-- Modal CREATE -->
     <div id="createModal" class="modal-create">
         <div class="modal-create-content">
-            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo">
             <div class="modal-create-title"><em>CREATE</em></div>
             <a href="./report-events.html" class="modal-create-btn">Reports</a>
-            <button class="modal-create-btn">Organize</button>
+            <a href="./organize.html" class="modal-create-btn">Organize</a>
+        </div>
+    </div>
+
+    <!-- Modal LOGIN -->
+    <div id="loginModal" class="modal-create" style="display:none;">
+        <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
+            <div class="modal-create-title" style="margin:0;">LOGIN</div>
+            <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
+            <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
+            <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
+            <div style="margin:8px 0; font-weight:600;">o</div>
+            <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
+            <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
+            <div class="wallet-grid">
+                <button id="metamaskBtn" class="modal-create-btn">MetaMask</button>
+                <button id="coinbaseBtn" class="modal-create-btn">Coinbase Wallet</button>
+                <button id="rabbyBtn" class="modal-create-btn">Rabby</button>
+                <button id="walletConnectBtn" class="modal-create-btn">WalletConnect</button>
+            </div>
         </div>
     </div>
 
@@ -65,13 +85,29 @@
             <!-- Aquí van los contenedores de solicitudes de reportes -->
         </div>
 
-        <div class="counter" id="eventCounter">Eventos reportados para siempre: <span>0</span></div>
+        <footer class="footer" style="margin-top:40px;">
+            <div class="footer-left">
+                <p>Events reported forever</p>
+                <h2 id="totalEvents">0</h2>
+                <p>Read</p>
+            </div>
+        </footer>
     </main>
 
     <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
     <script src="./js/report-events.js"></script>
+    <script>
+    // Actualizar contador como en Homepage
+    (function(){
+        const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+        const totalEl = document.getElementById('totalEvents');
+        if (totalEl) totalEl.textContent = reportajes.length.toLocaleString();
+    })();
+    </script>
     <script src="./js/modal-create.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="./js/login.js"></script>
     <script>
     document.getElementById('ownReportBtn').addEventListener('click', function() {
         window.location.href = 'reporte-por-iniciativa-propia.html';

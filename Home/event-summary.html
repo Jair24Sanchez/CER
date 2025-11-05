@@ -5,16 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumen del Evento - CER</title>
     <link rel="stylesheet" href="./event-summary.css">
+    <link rel="stylesheet" href="./report-events.css">
 </head>
 <body>
+    <!-- Modal CREATE -->
+    <div id="createModal" class="modal-create">
+        <div class="modal-create-content">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo">
+            <div class="modal-create-title"><em>CREATE</em></div>
+            <a href="./report-events.html" class="modal-create-btn">Reports</a>
+            <a href="./organize.html" class="modal-create-btn">Organize</a>
+        </div>
+    </div>
+
+    <!-- Modal LOGIN -->
+    <div id="loginModal" class="modal-create" style="display:none;">
+        <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
+            <div class="modal-create-title" style="margin:0;">LOGIN</div>
+            <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
+            <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
+            <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
+            <div style="margin:8px 0; font-weight:600;">o</div>
+            <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
+            <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
+            <div class="wallet-grid">
+                <button id="metamaskBtn" class="modal-create-btn">MetaMask</button>
+                <button id="coinbaseBtn" class="modal-create-btn">Coinbase Wallet</button>
+                <button id="rabbyBtn" class="modal-create-btn">Rabby</button>
+                <button id="walletConnectBtn" class="modal-create-btn">WalletConnect</button>
+            </div>
+        </div>
+    </div>
+
     <header class="main-header">
         <a href="./Homepage.html" class="logo-link">
             <img src="./cer-logo.png" alt="CER Logo" class="logo">
         </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
     </header>
     
     <div class="summary-container">
         <h1 id="summary-title" class="summary-title"></h1>
+        
+        <!-- Sección de detalles del evento -->
+        <div class="event-details-section">
+            <div class="event-detail-item">
+                <span class="event-detail-label">Event organizer:</span>
+                <div class="event-detail-value">
+                    <img src="./default-avatar.svg" alt="Avatar" class="organizer-avatar-small" id="organizer-avatar" onerror="this.style.display='none'">
+                    <span id="summary-organizer"></span>
+                </div>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Country:</span>
+                <div class="event-detail-value">
+                    <span id="summary-country-flag"></span>
+                    <span id="summary-country"></span>
+                </div>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Reporters:</span>
+                <span class="event-detail-value" id="summary-reporters"></span>
+            </div>
+            <div class="event-detail-item">
+                <span class="event-detail-label">Reward:</span>
+                <span class="event-detail-value" id="summary-reward"></span>
+            </div>
+        </div>
+        
+        <!-- Sección de categorías -->
+        <div class="event-categories-section">
+            <div class="category-badge">
+                <span class="category-label">Type:</span>
+                <span class="category-value" id="summary-type"></span>
+            </div>
+            <div class="category-badge">
+                <span class="category-label">Subtype:</span>
+                <span class="category-value" id="summary-subtype"></span>
+            </div>
+        </div>
         
         <div class="summary-section">
             <div class="section-label">Descripción</div>
@@ -33,6 +106,10 @@
         
         <button class="summary-apply-btn">Aplicar</button>
     </div>
+    <script src="./js/modal-create.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="./js/login.js"></script>
+    <script src="./js/countries-list.js"></script>
     <script src="./js/event-summary.js"></script>
 </body>
 </html> 

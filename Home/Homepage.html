@@ -10,10 +10,30 @@
     <!-- Modal CREATE -->
     <div id="createModal" class="modal-create">
         <div class="modal-create-content">
-            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo">
             <div class="modal-create-title"><em>CREATE</em></div>
             <a href="./report-events.html" class="modal-create-btn">Reports</a>
             <a href="./organize.html" class="modal-create-btn">Organize</a>
+        </div>
+    </div>
+
+    <!-- Modal LOGIN -->
+    <div id="loginModal" class="modal-create" style="display:none;">
+        <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
+            <div class="modal-create-title" style="margin:0;">LOGIN</div>
+            <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
+            <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
+            <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
+            <div style="margin:8px 0; font-weight:600;">o</div>
+            <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
+            <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
+            <div class="wallet-grid">
+                <button id="metamaskBtn" class="modal-create-btn">MetaMask</button>
+                <button id="coinbaseBtn" class="modal-create-btn">Coinbase Wallet</button>
+                <button id="rabbyBtn" class="modal-create-btn">Rabby</button>
+                <button id="walletConnectBtn" class="modal-create-btn">WalletConnect</button>
+            </div>
         </div>
     </div>
 
@@ -87,6 +107,9 @@
     <!-- Scripts -->
     <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
+    <script src="./js/modal-create.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="./js/login.js"></script>
     <script src="./js/HomepageJS.js"></script>
 </body>
 </html>

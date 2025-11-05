@@ -11,16 +11,16 @@
     <!-- Modal CREATE -->
     <div id="createModal" class="modal-create">
         <div class="modal-create-content">
-            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo">
             <div class="modal-create-title"><em>CREATE</em></div>
             <a href="./report-events.html" class="modal-create-btn">Reports</a>
-            <button class="modal-create-btn">Organize</button>
+            <a href="./organize.html" class="modal-create-btn">Organize</a>
         </div>
     </div>
     <!-- Modal LOGIN -->
     <div id="loginModal" class="modal-create" style="display:none;">
         <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
-            <img src="./cer-logo-modal.jpg" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
             <div class="modal-create-title" style="margin:0;">LOGIN</div>
             <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
             <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
@@ -67,7 +67,7 @@
                 </div>
 
                 <!-- Filtros (bloqueados) -->
-                <div class="filters">
+                <div class="filters" style="display:none;">
                     <select id="eventType" class="filter-select" disabled style="background: #f5f5f5;">
                         <option value="irl">IRL Events</option>
                         <option value="digital">Digital Events</option>
@@ -79,7 +79,7 @@
             </div>
 
             <!-- Ubicación bloqueada -->
-            <div class="filters" style="margin-bottom: 1.5rem;">
+                <div class="filters" style="margin-bottom: 1.5rem;">
                 <input id="lockedLocation" class="filter-select" placeholder="Ubicación" disabled style="background: #f5f5f5;">
             </div>
 
@@ -149,6 +149,21 @@
             if(subtypeBadge){ subtypeBadge.textContent = ev.subtypeLabel; subtypeBadge.style.display='inline-block'; }
         })();
 
+        // Obtener sesión actual para identificar al autor
+        const session = JSON.parse(localStorage.getItem('session')||'null');
+        const authorName = session?.email ? session.email : (session?.provider ? session.provider : 'reporter');
+        const authorId = session?.email || session?.provider || 'anon';
+
+        // Si ya envió un reportaje para este request, bloquear reenvío
+        (function(){
+            const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            const already = completed.some(r => r.requestId === ev.id && r.authorId === authorId);
+            if (already) {
+                const btn = document.getElementById('submitReportBtn');
+                if (btn) { btn.disabled = true; btn.textContent = 'Ya enviado'; }
+            }
+        })();
+
         // Envío: guardar como reportaje realizado y vincular al evento
         document.getElementById('submitReportBtn').addEventListener('click', function(){
             const content = document.querySelector('.blog-content').innerHTML.trim();
@@ -156,7 +171,15 @@
                 alert('Escribe el contenido del reportaje.');
                 return;
             }
+            const btn = document.getElementById('submitReportBtn');
+            if (btn && btn.disabled) { return; }
             const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            // Evitar duplicados por seguridad
+            if (completed.some(r => r.requestId === ev.id && r.authorId === authorId)) {
+                alert('Este reportaje ya fue enviado por tu usuario.');
+                if (btn) { btn.disabled = true; btn.textContent = 'Ya enviado'; }
+                return;
+            }
             const report = {
                 id: Date.now().toString(),
                 requestId: ev.id,
@@ -166,7 +189,8 @@
                 subtype: ev.subtype,
                 typeLabel: ev.typeLabel,
                 subtypeLabel: ev.subtypeLabel,
-                author: 'reporter',
+                author: authorName,
+                authorId: authorId,
                 rewardType: ev.rewardType,
                 rewardAmount: ev.rewardAmount,
                 createdAt: new Date().toISOString()
