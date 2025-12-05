@@ -119,6 +119,78 @@
         return true;
     }
 
+    // Obtener rol del usuario actual
+    async function getUserRole() {
+        const session = getSession();
+        if (!session || !session.address) {
+            return null;
+        }
+
+        // Si tenemos web3Contract disponible, usarlo
+        if (window.web3Contract) {
+            try {
+                const role = await window.web3Contract.getUserRole(session.address);
+                return role;
+            } catch (error) {
+                console.error('Error obteniendo rol:', error);
+            }
+        }
+
+        // Fallback: verificar en la sesión
+        return session.role || null;
+    }
+
+    // Verificar si el usuario tiene un rol específico
+    async function hasRole(requiredRole) {
+        const session = getSession();
+        if (!session || !session.address) {
+            return false;
+        }
+
+        if (window.web3Contract) {
+            try {
+                return await window.web3Contract.hasRole(session.address, requiredRole);
+            } catch (error) {
+                console.error('Error verificando rol:', error);
+            }
+        }
+
+        // Fallback: verificar en la sesión
+        const userRole = session.role || 0;
+        const ROLES = window.web3Contract?.ROLES || { REPORTER: 1, ORGANIZER: 2, BOTH: 3 };
+        return (userRole & requiredRole) === requiredRole || userRole === ROLES.BOTH;
+    }
+
+    // Verificar si el usuario es Reportero
+    async function isReporter() {
+        const ROLES = window.web3Contract?.ROLES || { REPORTER: 1, ORGANIZER: 2, BOTH: 3 };
+        return await hasRole(ROLES.REPORTER);
+    }
+
+    // Verificar si el usuario es Organizador
+    async function isOrganizer() {
+        const ROLES = window.web3Contract?.ROLES || { REPORTER: 1, ORGANIZER: 2, BOTH: 3 };
+        return await hasRole(ROLES.ORGANIZER);
+    }
+
+    // Proteger página para un rol específico
+    async function protectPageForRole(requiredRole, roleName) {
+        if (!isAuthenticated()) {
+            alert('Debes iniciar sesión para acceder a esta página.');
+            window.location.href = './Homepage.html';
+            return false;
+        }
+
+        const hasRequiredRole = await hasRole(requiredRole);
+        if (!hasRequiredRole) {
+            alert(`Esta página es solo para ${roleName}. Por favor, registra tu rol primero.`);
+            window.location.href = './Homepage.html';
+            return false;
+        }
+
+        return true;
+    }
+
     // Inicializar al cargar
     function init() {
         updateUI();
@@ -150,7 +222,12 @@
         logout: logout,
         protectPage: protectPage,
         protectAction: protectAction,
-        updateUI: updateUI
+        updateUI: updateUI,
+        getUserRole: getUserRole,
+        hasRole: hasRole,
+        isReporter: isReporter,
+        isOrganizer: isOrganizer,
+        protectPageForRole: protectPageForRole
     };
 
     // Inicializar cuando el DOM esté listo

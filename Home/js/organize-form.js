@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const formRight = document.querySelector('.organize-form-right');
     const submitBtn = document.querySelector('.submit-btn-final');
     if (formRight && submitBtn) {
-        formRight.addEventListener('submit', function(e) {
+        formRight.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Validar todos los campos obligatorios
@@ -401,22 +401,132 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Si todo está válido, proceder
-            // Obtener información del organizador desde la sesión
+            // Verificar que el usuario sea organizador (si usa Web3)
             const session = JSON.parse(localStorage.getItem('session') || 'null');
             if (!session || (!session.email && !session.address && !session.provider)) {
                 alert('Error: No se pudo obtener la información de la sesión.');
                 return;
             }
-            const organizerName = session?.email ? session.email : (session?.address ? session.address : (session?.provider ? session.provider : 'Organizador'));
+
+            // Si el usuario tiene dirección Web3, verificar rol de organizador
+            if (session.address && window.auth && window.web3Contract) {
+                const isOrg = await window.auth.isOrganizer();
+                if (!isOrg) {
+                    const register = confirm('No estás registrado como organizador. ¿Deseas registrarte ahora?');
+                    if (register) {
+                        try {
+                            await window.web3Contract.registerAsOrganizer(session.address);
+                            // Actualizar sesión con nuevo rol
+                            session.role = await window.web3Contract.getUserRole(session.address);
+                            localStorage.setItem('session', JSON.stringify(session));
+                        } catch (error) {
+                            alert('Error al registrarse como organizador: ' + error.message);
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            }
+
+            const organizerName = session?.email ? session.email : (session?.address ? `${session.address.substring(0, 6)}...${session.address.substring(session.address.length - 4)}` : (session?.provider ? session.provider : 'Organizador'));
             const organizerId = session?.email || session?.address || session?.provider || 'organizer-' + Date.now();
 
-            // Crear objeto del evento solicitado
+            // Convertir monto de recompensa a ETH si es necesario
+            let rewardAmountETH = 0;
+            const hasReward = rewardType === 'recompensa';
+            if (hasReward && rewardAmount) {
+                // El monto está en dólares, convertirlo a ETH (simplificado - en producción usar oráculo de precios)
+                // Por ahora, asumimos 1 USD = 0.0005 ETH (ajustar según necesidad)
+                const amountUSD = parseInt(rewardAmount.replace(/[^\d]/g, ''));
+                rewardAmountETH = amountUSD * 0.0005; // Conversión simplificada
+            }
+
+            // Si hay recompensa y el usuario tiene wallet Web3, procesar depósito
+            if (hasReward && rewardAmountETH > 0 && session.address && window.web3Contract) {
+                try {
+                    // Mostrar confirmación de transacción
+                    const confirmDeposit = confirm(
+                        `Vas a depositar ${rewardAmountETH.toFixed(6)} ETH como recompensa.\n\n` +
+                        `Esto bloqueará los fondos hasta que apruebes un reportaje.\n\n` +
+                        `¿Deseas continuar?`
+                    );
+
+                    if (!confirmDeposit) {
+                        return;
+                    }
+
+                    // Crear solicitud en blockchain con depósito
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Procesando transacción...';
+
+                    const requestId = await window.web3Contract.createReportRequest({
+                        title,
+                        description,
+                        reportersNeeded: parseInt(reporters),
+                        hasReward: true,
+                        rewardAmount: rewardAmountETH
+                    });
+
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publicar';
+
+                    // Crear objeto del evento solicitado con información de blockchain
+                    const eventData = {
+                        id: requestId,
+                        blockchainRequestId: requestId,
+                        title,
+                        organizer: organizerName,
+                        organizerId: organizerId,
+                        organizerAddress: session.address,
+                        type: document.querySelector('input[name="event-type"]:checked').value,
+                        typeLabel: document.querySelector('input[name="event-type"]:checked').value === 'irl' ? 'IRL Events' : 'Digital Events',
+                        subtype,
+                        subtypeLabel: document.getElementById('event-subtype').options[document.getElementById('event-subtype').selectedIndex].text,
+                        reporters: parseInt(reporters),
+                        rewardType,
+                        rewardAmount: rewardAmount ? parseInt(rewardAmount.replace(/[^\d]/g, '')) : 0,
+                        rewardAmountETH: rewardAmountETH,
+                        description,
+                        startDate,
+                        startTime,
+                        endDate,
+                        endTime,
+                        location,
+                        status: 'disponible',
+                        createdAt: new Date().toISOString(),
+                        image: image ? image.name : null,
+                        blockchainDeposited: true
+                    };
+
+                    // Guardar evento solicitado en localStorage
+                    const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+                    requestedEvents.push(eventData);
+                    localStorage.setItem('requestedEvents', JSON.stringify(requestedEvents));
+
+                    // También guardar en eventSummary para compatibilidad
+                    localStorage.setItem('eventSummary', JSON.stringify(eventData));
+                    
+                    alert('¡Solicitud creada exitosamente! Los fondos han sido depositados y bloqueados.');
+                    window.location.href = './report-events.html';
+                    return;
+
+                } catch (error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publicar';
+                    console.error('Error creando solicitud en blockchain:', error);
+                    alert('Error al procesar la transacción: ' + error.message);
+                    return;
+                }
+            }
+
+            // Si no hay recompensa o no usa Web3, crear solicitud normal
             const eventData = {
                 id: Date.now().toString(),
                 title,
                 organizer: organizerName,
                 organizerId: organizerId,
+                organizerAddress: session.address || null,
                 type: document.querySelector('input[name="event-type"]:checked').value,
                 typeLabel: document.querySelector('input[name="event-type"]:checked').value === 'irl' ? 'IRL Events' : 'Digital Events',
                 subtype,

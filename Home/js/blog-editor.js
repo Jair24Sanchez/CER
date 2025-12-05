@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Manejo del envío del blog
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', async () => {
         // Verificar autenticación antes de permitir crear reportaje
         if (window.auth && !window.auth.isAuthenticated()) {
             alert('Debes iniciar sesión para crear un reportaje.');
@@ -169,29 +169,182 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error: No se pudo obtener la información de la sesión.');
             return;
         }
-        const authorName = session?.email ? session.email : (session?.address ? session.address : (session?.provider ? session.provider : 'reporter'));
+
+        // Verificar si el usuario es reportero (si usa Web3)
+        if (session.address && window.auth && window.web3Contract) {
+            const isRep = await window.auth.isReporter();
+            if (!isRep) {
+                const register = confirm('No estás registrado como reportero. ¿Deseas registrarte ahora?');
+                if (register) {
+                    try {
+                        await window.web3Contract.registerAsReporter(session.address);
+                        // Actualizar sesión con nuevo rol
+                        session.role = await window.web3Contract.getUserRole(session.address);
+                        localStorage.setItem('session', JSON.stringify(session));
+                    } catch (error) {
+                        alert('Error al registrarse como reportero: ' + error.message);
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            }
+        }
+
+        const authorName = session?.email ? session.email : (session?.address ? `${session.address.substring(0, 6)}...${session.address.substring(session.address.length - 4)}` : (session?.provider ? session.provider : 'reporter'));
         const authorId = session?.email || session?.address || session?.provider || 'anon';
 
-        // Crear objeto del reportaje
-        const reportaje = {
-            id: Date.now().toString(),
-            title: title,
-            content: content,
-            type: type,
-            subtype: subtype,
-            typeLabel: type === 'irl' ? 'IRL Events' : 'Digital Events',
-            subtypeLabel: secondaryFilter.options[secondaryFilter.selectedIndex].text,
-            timestamp: new Date().toISOString(),
-            author: authorName,
-            authorId: authorId,
-            rewardType: 'voluntario',
-            rewardAmount: 0,
-            paid: false,
-            paidAt: null
-        };
+        // Verificar si este reportaje es para una solicitud de organizador
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestId = urlParams.get('id');
 
-        // Guardar en localStorage
-        saveReportaje(reportaje);
+        let reportaje;
+        let isRequestReport = false;
+        let requestEvent = null;
+
+        if (requestId) {
+            // Es un reportaje para una solicitud
+            isRequestReport = true;
+            const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+            requestEvent = requestedEvents.find(e => e.id === requestId || e.blockchainRequestId === requestId);
+
+            if (!requestEvent) {
+                alert('Error: No se encontró la solicitud de reportaje.');
+                return;
+            }
+
+            // Crear objeto del reportaje vinculado a la solicitud
+            reportaje = {
+                id: Date.now().toString(),
+                requestId: requestId,
+                title: title,
+                content: content,
+                type: requestEvent.type || type,
+                subtype: requestEvent.subtype || subtype,
+                typeLabel: requestEvent.typeLabel || (type === 'irl' ? 'IRL Events' : 'Digital Events'),
+                subtypeLabel: requestEvent.subtypeLabel || secondaryFilter.options[secondaryFilter.selectedIndex].text,
+                timestamp: new Date().toISOString(),
+                author: authorName,
+                authorId: authorId,
+                authorAddress: session.address || null,
+                rewardType: requestEvent.rewardType || 'voluntario',
+                rewardAmount: requestEvent.rewardAmount || 0,
+                rewardAmountETH: requestEvent.rewardAmountETH || 0,
+                paid: false,
+                paidAt: null,
+                status: 'pendiente_aprobacion',
+                organizerAddress: requestEvent.organizerAddress || null
+            };
+
+            // Si el organizador tiene recompensa en blockchain, enviar para aprobación
+            if (requestEvent.blockchainDeposited && session.address && window.web3Contract) {
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Enviando para aprobación...';
+
+                    // Enviar reportaje a blockchain para aprobación
+                    await window.web3Contract.submitReportForApproval(requestId, {
+                        id: reportaje.id,
+                        title: reportaje.title,
+                        content: reportaje.content,
+                        author: reportaje.authorAddress
+                    });
+
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publicar';
+
+                    // Actualizar estado de la solicitud
+                    requestEvent.status = 'espera';
+                    requestEvent.submittedReport = reportaje;
+                    requestEvent.reporterAddress = session.address;
+                    requestEvent.submittedAt = new Date().toISOString();
+                    const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+                    const eventIndex = requestedEvents.findIndex(e => e.id === requestId || e.blockchainRequestId === requestId);
+                    if (eventIndex !== -1) {
+                        requestedEvents[eventIndex] = requestEvent;
+                        localStorage.setItem('requestedEvents', JSON.stringify(requestedEvents));
+                    }
+
+                    alert('¡Reportaje enviado para aprobación! El organizador revisará tu trabajo y liberará la recompensa si está conforme.');
+                    
+                    // Guardar reportaje en localStorage
+                    saveReportaje(reportaje);
+                    
+                    // Redirigir a página de confirmación
+                    const confirmationURL = generateConfirmationURL(reportaje.id);
+                    window.location.href = confirmationURL;
+                    return;
+
+                } catch (error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publicar';
+                    console.error('Error enviando reportaje para aprobación:', error);
+                    alert('Error al enviar reportaje para aprobación: ' + error.message);
+                    return;
+                }
+            } else {
+                // Solicitud sin blockchain, guardar normalmente
+                saveReportaje(reportaje);
+                
+                // Actualizar estado de la solicitud
+                requestEvent.status = 'espera';
+                requestEvent.submittedReport = reportaje;
+                requestEvent.reporterAddress = session.address || authorId;
+                requestEvent.submittedAt = new Date().toISOString();
+                const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+                const eventIndex = requestedEvents.findIndex(e => e.id === requestId || e.blockchainRequestId === requestId);
+                if (eventIndex !== -1) {
+                    requestedEvents[eventIndex] = requestEvent;
+                    localStorage.setItem('requestedEvents', JSON.stringify(requestedEvents));
+                }
+
+                alert('¡Reportaje enviado para aprobación!');
+            }
+        } else {
+            // Reportaje libre (no vinculado a solicitud)
+            reportaje = {
+                id: Date.now().toString(),
+                title: title,
+                content: content,
+                type: type,
+                subtype: subtype,
+                typeLabel: type === 'irl' ? 'IRL Events' : 'Digital Events',
+                subtypeLabel: secondaryFilter.options[secondaryFilter.selectedIndex].text,
+                timestamp: new Date().toISOString(),
+                author: authorName,
+                authorId: authorId,
+                authorAddress: session.address || null,
+                rewardType: 'voluntario',
+                rewardAmount: 0,
+                paid: false,
+                paidAt: null,
+                status: 'publicado'
+            };
+
+            // Si el usuario tiene wallet Web3, publicar como token NFT
+            if (session.address && window.web3Contract) {
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Publicando en blockchain...';
+
+                    // Crear token URI (en producción, subir a IPFS)
+                    const tokenURI = `https://cer.app/reportajes/${reportaje.id}`;
+                    
+                    // Publicar como token (sin requestId porque es libre)
+                    // Nota: Esto requeriría una función adicional en el contrato para reportajes libres
+                    // Por ahora, solo guardamos en localStorage
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Publicar';
+                } catch (error) {
+                    console.error('Error publicando en blockchain:', error);
+                    // Continuar con guardado local aunque falle blockchain
+                }
+            }
+
+            // Guardar en localStorage
+            saveReportaje(reportaje);
+        }
 
         // Generar URL de confirmación
         const confirmationURL = generateConfirmationURL(reportaje.id);

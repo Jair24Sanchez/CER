@@ -138,6 +138,8 @@
         </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="./js/web3-contract.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/countries-list.js"></script>
     <script src="./js/languages-list.js"></script>
@@ -154,38 +156,146 @@
         const formRow = document.querySelector('.organize-form-row');
         const completedGrid = document.getElementById('completedGrid');
 
-        function renderCompleted(){
+        async function renderCompleted(){
+            const session = JSON.parse(localStorage.getItem('session') || 'null');
+            const organizerAddress = session?.address || null;
+            
+            // Obtener solicitudes del organizador que tienen reportajes pendientes
+            let pendingReports = [];
+            if (organizerAddress && window.web3Contract) {
+                try {
+                    const organizerRequests = await window.web3Contract.getOrganizerRequests(organizerAddress);
+                    organizerRequests.forEach(req => {
+                        if (req.submittedReport && req.status === 'espera') {
+                            pendingReports.push({
+                                ...req.submittedReport,
+                                requestId: req.id || req.blockchainRequestId,
+                                requestTitle: req.title,
+                                rewardAmountETH: req.rewardAmountETH,
+                                blockchainDeposited: req.blockchainDeposited,
+                                reporterAddress: req.reporterAddress
+                            });
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error obteniendo solicitudes:', error);
+                }
+            }
+            
+            // También obtener reportajes completados tradicionales
             const completed = JSON.parse(localStorage.getItem('completedReports')||'[]');
+            
+            // Combinar ambos
+            const allReports = [...pendingReports, ...completed];
+            
             completedGrid.innerHTML = '';
-            if(completed.length===0){
+            if(allReports.length===0){
                 completedGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#666;">No hay reportajes enviados aún</div>';
                 return;
             }
-            completed.forEach(r=>{
+            
+            allReports.forEach(r=>{
                 const card = document.createElement('div');
                 card.className = 'request-card';
                 card.style.background = '#fff';
                 card.style.borderRadius = '16px';
                 card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)';
                 card.style.padding = '12px';
+                
+                const isPending = r.status === 'pendiente_aprobacion' || r.status === 'espera';
+                const hasBlockchainReward = r.blockchainDeposited && r.rewardAmountETH > 0;
+                
                 card.innerHTML = `
                     <div class="request-content">
-                        <h3 class="request-title" style="margin:0 0 8px 0;">${r.title}</h3>
+                        <h3 class="request-title" style="margin:0 0 8px 0;">${r.title || r.requestTitle}</h3>
                         <div class="request-meta" style="display:flex; gap:8px; color:#666; font-size:.95rem;">
-                            <span>${r.typeLabel}</span>
-                            <span class="request-subtype">${r.subtypeLabel}</span>
+                            <span>${r.typeLabel || ''}</span>
+                            <span class="request-subtype">${r.subtypeLabel || ''}</span>
                             ${r.author ? `<span style="margin-left:auto; color:#444;">Autor: ${r.author}</span>` : ''}
                         </div>
+                        ${hasBlockchainReward ? `<div style="margin-top:4px; color:#22c55e; font-weight:600;">Recompensa: ${r.rewardAmountETH.toFixed(6)} ETH</div>` : ''}
                         <div class="request-description" style="margin-top:8px; color:#333;">
-                            ${r.content.replace(/<[^>]*>/g,'').slice(0,120)}...
+                            ${(r.content || '').replace(/<[^>]*>/g,'').slice(0,120)}...
                         </div>
-                        <div class="request-actions" style="margin-top:12px; display:flex; gap:8px;">
+                        <div class="request-actions" style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
                             <button class="btn-view" onclick="(function(id){ localStorage.setItem('previewReportId', id); localStorage.setItem('fromCompletedReports', 'true'); window.location.href='./reportajes/leer.html?id='+id; })('${r.id}')">Ver</button>
+                            ${isPending && organizerAddress ? `
+                                <button class="btn-approve" onclick="approveReport('${r.requestId || r.id}', '${r.reporterAddress || r.authorId}', ${hasBlockchainReward}, ${r.rewardAmountETH || 0})" style="background:#22c55e; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">
+                                    ${hasBlockchainReward ? 'Aprobar y Liberar Recompensa' : 'Aprobar'}
+                                </button>
+                                <button class="btn-reject" onclick="rejectReport('${r.requestId || r.id}')" style="background:#dc3545; color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;">
+                                    Rechazar
+                                </button>
+                            ` : ''}
                         </div>
                     </div>`;
                 completedGrid.appendChild(card);
             });
         }
+        
+        // Función para aprobar reportaje
+        window.approveReport = async function(requestId, reporterAddress, hasBlockchainReward, rewardAmountETH) {
+            const session = JSON.parse(localStorage.getItem('session') || 'null');
+            if (!session || !session.address) {
+                alert('Debes estar conectado con una wallet Web3 para aprobar reportajes.');
+                return;
+            }
+            
+            if (!confirm('¿Estás seguro de que deseas aprobar este reportaje?' + (hasBlockchainReward ? `\n\nSe liberarán ${rewardAmountETH} ETH al reportero.` : ''))) {
+                return;
+            }
+            
+            try {
+                if (hasBlockchainReward && window.web3Contract) {
+                    // Aprobar y liberar recompensa en blockchain
+                    await window.web3Contract.approveReportAndReleaseReward(requestId, reporterAddress);
+                    
+                    // Publicar como token NFT
+                    const tokenURI = `https://cer.app/reportajes/${requestId}`;
+                    await window.web3Contract.publishReportAsToken(requestId, tokenURI);
+                    
+                    alert('¡Reportaje aprobado y recompensa liberada exitosamente! El reportaje ha sido publicado como token NFT.');
+                } else {
+                    // Aprobar sin blockchain
+                    const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+                    const event = requestedEvents.find(e => e.id === requestId || e.blockchainRequestId === requestId);
+                    if (event) {
+                        event.status = 'publicado';
+                        event.approvedAt = new Date().toISOString();
+                        event.approvedBy = session.address || session.email || session.provider;
+                        localStorage.setItem('requestedEvents', JSON.stringify(requestedEvents));
+                    }
+                    
+                    alert('¡Reportaje aprobado exitosamente!');
+                }
+                
+                // Recargar la vista
+                renderCompleted();
+            } catch (error) {
+                console.error('Error aprobando reportaje:', error);
+                alert('Error al aprobar reportaje: ' + error.message);
+            }
+        };
+        
+        // Función para rechazar reportaje
+        window.rejectReport = function(requestId) {
+            if (!confirm('¿Estás seguro de que deseas rechazar este reportaje?')) {
+                return;
+            }
+            
+            const requestedEvents = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+            const event = requestedEvents.find(e => e.id === requestId || e.blockchainRequestId === requestId);
+            if (event) {
+                event.status = 'declinado';
+                event.rejectedAt = new Date().toISOString();
+                // Si hay recompensa en blockchain, se puede devolver al organizador
+                // (requeriría función adicional en el contrato)
+                localStorage.setItem('requestedEvents', JSON.stringify(requestedEvents));
+            }
+            
+            alert('Reportaje rechazado.');
+            renderCompleted();
+        };
 
 
         function showReview(){
