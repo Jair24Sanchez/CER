@@ -360,7 +360,12 @@
             
             // Mover a reportajes publicados
             const published = JSON.parse(localStorage.getItem('reportajes') || '[]');
-            published.push({
+            
+            // Obtener información del evento solicitado para el organizador
+            const reqs = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
+            const req = reqs.find(e => e.id === report.requestId);
+            
+            const publishedReport = {
                 id: report.id,
                 title: report.title,
                 content: report.content,
@@ -368,13 +373,21 @@
                 subtype: report.subtype,
                 typeLabel: report.typeLabel,
                 subtypeLabel: report.subtypeLabel,
-                timestamp: new Date().toISOString()
-            });
+                timestamp: new Date().toISOString(),
+                author: report.author,
+                authorId: report.authorId,
+                organizer: req ? req.organizer : null,
+                organizerId: req ? req.organizerId : null,
+                rewardType: report.rewardType,
+                rewardAmount: report.rewardAmount || 0,
+                paid: report.rewardType === 'recompensa' && report.rewardAmount > 0 ? true : false,
+                paidAt: report.rewardType === 'recompensa' && report.rewardAmount > 0 ? new Date().toISOString() : null
+            };
+            
+            published.push(publishedReport);
             localStorage.setItem('reportajes', JSON.stringify(published));
             
             // Actualizar requestedEvent a 'publicado'
-            const reqs = JSON.parse(localStorage.getItem('requestedEvents') || '[]');
-            const req = reqs.find(e => e.id === report.requestId);
             if (req) {
                 req.status = 'publicado';
                 localStorage.setItem('requestedEvents', JSON.stringify(reqs));

@@ -2,6 +2,19 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('El script se ha cargado correctamente');
     
+    // Botón Stats - navegar a stats.html
+    const statsBtn = document.querySelector('.stats-btn');
+    if (statsBtn) {
+        statsBtn.addEventListener('click', function() {
+            // Determinar la ruta relativa según la ubicación actual
+            const isInSubfolder = window.location.pathname.includes('/reportajes/') || 
+                                  window.location.pathname.includes('/digital-events/') || 
+                                  window.location.pathname.includes('/irl-events/');
+            const statsPath = isInSubfolder ? '../stats.html' : './stats.html';
+            window.location.href = statsPath;
+        });
+    }
+    
     // Inicializar el contador
     const counter = document.getElementById('eventCounter');
     if(counter) {

@@ -18,11 +18,18 @@ body {
 }
 
 nav {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 1rem 2rem;
     background-color: var(--background-color);
+}
+
+.logo-link {
+    text-decoration: none;
+    display: block;
+    justify-self: center;
+    grid-column: 2;
 }
 
 .logo {
@@ -37,6 +44,14 @@ nav {
     padding: 0.5rem 1.5rem;
     border-radius: 4px;
     cursor: pointer;
+    justify-self: start;
+}
+
+.auth-buttons {
+    justify-self: end;
+    grid-column: 3;
+    display: flex;
+    gap: 1rem;
 }
 
 .auth-buttons button {
@@ -44,7 +59,6 @@ nav {
     color: white;
     border: none;
     padding: 0.5rem 1.5rem;
-    margin-left: 1rem;
     border-radius: 4px;
     cursor: pointer;
 }
@@ -69,7 +83,7 @@ h1 {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     max-width: 700px;
     margin: 0 auto;

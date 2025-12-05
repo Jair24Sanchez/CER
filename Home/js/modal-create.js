@@ -32,11 +32,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const createButtons = Array.from(document.querySelectorAll('.create-btn'));
     const modalContent = createModal.querySelector('.modal-create-content');
 
-    function openCreate(){ createModal.classList.add('show'); }
+    function openCreate(){ 
+        // Verificar autenticación antes de abrir
+        if (window.auth && !window.auth.isAuthenticated()) {
+            // Abrir modal de login en su lugar
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+                loginModal.classList.add('show');
+            } else {
+                alert('Debes iniciar sesión para crear contenido.');
+            }
+            return;
+        }
+        createModal.classList.add('show'); 
+    }
     function closeCreate(){ createModal.classList.remove('show'); }
 
-    createButtons.forEach(btn => btn.addEventListener('click', openCreate));
-    document.addEventListener('click', (e)=>{ if (e.target.closest('.create-btn')) openCreate(); });
+    createButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openCreate();
+        });
+    });
+    document.addEventListener('click', (e)=>{ 
+        if (e.target.closest('.create-btn')) {
+            e.preventDefault();
+            openCreate();
+        }
+    });
 
     createModal.addEventListener('mousedown', function(e) {
         if (!modalContent.contains(e.target)) closeCreate();
@@ -46,8 +70,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Redirección al botón Organize
     const organizeBtn = createModal.querySelector('[data-go-organize]');
     if (organizeBtn) {
-        organizeBtn.addEventListener('click', function() {
+        organizeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Verificar autenticación antes de redirigir
+            if (window.auth && !window.auth.isAuthenticated()) {
+                closeCreate();
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                    loginModal.classList.add('show');
+                } else {
+                    alert('Debes iniciar sesión para organizar eventos.');
+                }
+                return;
+            }
             window.location.href = pathPrefix() + 'organize.html';
+        });
+    }
+
+    // Proteger enlaces de Reports también
+    const reportsLink = createModal.querySelector('a[href*="report-events"]');
+    if (reportsLink) {
+        reportsLink.addEventListener('click', function(e) {
+            // Verificar autenticación antes de redirigir
+            if (window.auth && !window.auth.isAuthenticated()) {
+                e.preventDefault();
+                closeCreate();
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                    loginModal.classList.add('show');
+                } else {
+                    alert('Debes iniciar sesión para ver reportes.');
+                }
+            }
         });
     }
 });

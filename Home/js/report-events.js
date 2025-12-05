@@ -123,42 +123,81 @@ function loadRequestedEvents() {
 function createEventCard(event) {
     const card = document.createElement('div');
     card.className = 'request-card';
+    
+    // Obtener imagen del evento (si existe)
+    const eventImage = event.image ? `./uploads/${event.image}` : './default-event.jpg';
+    
+    // Obtener foto del organizador (si existe, sino usar default)
+    const organizerPhoto = event.organizerPhoto || './default-avatar.svg';
+    const organizerName = event.organizer || 'Organizador';
+    
+    // Formatear fecha
+    const publishDate = event.createdAt ? new Date(event.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    
+    // Obtener bandera del país si es IRL
+    let subtypeDisplay = event.subtypeLabel || event.subtype;
+    if (event.type === 'irl' && event.subtype && window.countriesList) {
+        const country = window.countriesList.find(c => c.code.toLowerCase() === event.subtype.toLowerCase());
+        if (country) {
+            const flagEmoji = getCountryFlagEmoji(country.code);
+            subtypeDisplay = flagEmoji + ' ' + country.name;
+        }
+    }
+    
+    // Status con colores
+    const statusClass = `status-${event.status}`;
+    const statusLabel = getStatusLabel(event.status);
+    
     card.innerHTML = `
-        <div class="request-content">
-            <div class="request-header">
-                <h3 class="request-title">${event.title}</h3>
-                <span class="request-status status-${event.status}">${getStatusLabel(event.status)}</span>
-            </div>
-            <div class="request-meta">
-                <span class="request-type">${event.typeLabel}</span>
-                <span class="request-subtype">${event.subtypeLabel}</span>
-                <span class="request-date">${new Date(event.startDate).toLocaleDateString()}</span>
-            </div>
-            <div class="request-description">
-                ${event.description.substring(0, 100)}${event.description.length > 100 ? '...' : ''}
-            </div>
-            <div class="request-footer">
-                <div class="request-reward">
-                    ${event.rewardType === 'recompensa' ? 
-                        `<span class="reward-amount">$${event.rewardAmount.toLocaleString()}</span>` : 
-                        '<span class="reward-volunteer">Voluntario</span>'
-                    }
-                </div>
-                <div class="request-reporters">
-                    ${event.reporters} reportero${event.reporters > 1 ? 's' : ''}
+        <!-- Mitad superior: Foto del evento -->
+        <div class="request-thumbnail-container">
+            <img src="${eventImage}" alt="${event.title}" class="request-thumbnail" onerror="this.src='./default-event.jpg'">
+        </div>
+        
+        <!-- Título (máximo 22% del cuadro) -->
+        <div class="request-title-section">
+            <h3 class="request-title">${event.title}</h3>
+        </div>
+        
+        <!-- Último 1/4: Información del organizador y detalles -->
+        <div class="request-bottom-section">
+            <div class="request-organizer-info">
+                <img src="${organizerPhoto}" alt="${organizerName}" class="organizer-photo" onerror="this.src='./default-avatar.svg'">
+                <div class="organizer-details">
+                    <span class="organizer-name">${organizerName}</span>
+                    <span class="request-date">${publishDate}</span>
                 </div>
             </div>
-            <div class="request-actions">
-                <button class="btn-apply" onclick="applyToEvent('${event.id}')">
-                    Aplicar
-                </button>
-                <button class="btn-view" onclick="viewEventDetails('${event.id}')">
-                    Ver detalles
-                </button>
+            <div class="request-meta-tags">
+                <span class="request-reward-tag ${event.rewardType === 'recompensa' ? 'reward-amount' : 'reward-volunteer'}">
+                    ${event.rewardType === 'recompensa' ? `$${event.rewardAmount.toLocaleString()}` : 'Voluntario'}
+                </span>
+                <span class="request-subtype-tag">${subtypeDisplay}</span>
+                <span class="request-status-tag ${statusClass}">${statusLabel}</span>
             </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="request-actions">
+            <button class="btn-apply" onclick="applyToEvent('${event.id}')">
+                Aplicar
+            </button>
+            <button class="btn-view" onclick="viewEventDetails('${event.id}')">
+                Ver detalles
+            </button>
         </div>
     `;
     return card;
+}
+
+// Función para obtener emoji de bandera
+function getCountryFlagEmoji(countryCode) {
+    if (!countryCode || countryCode.length !== 2) return '';
+    const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
 }
 
 // Función para obtener etiqueta de status

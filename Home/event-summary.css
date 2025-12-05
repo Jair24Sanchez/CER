@@ -6,8 +6,8 @@ body {
 }
 
 .main-header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 1.5rem 2rem 1rem 2rem;
     background: #fff;
@@ -16,6 +16,8 @@ body {
 .logo-link {
     text-decoration: none;
     display: block;
+    justify-self: center;
+    grid-column: 2;
 }
 
 .logo {

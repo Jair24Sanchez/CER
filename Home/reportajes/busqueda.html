@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de búsqueda - CER</title>
+    <link rel="stylesheet" href="../report-events.css">
+    <link rel="stylesheet" href="../blog-editor.css">
+    <style>
+        .busqueda-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .busqueda-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: url('../Barra.png') no-repeat center center;
+            background-size: cover;
+            color: white;
+            border-radius: 12px;
+        }
+        .busqueda-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .busqueda-query {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-style: italic;
+        }
+        .busqueda-breadcrumb {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .busqueda-breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .busqueda-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .resultados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .resultado-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .resultado-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .resultado-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .resultado-content {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-height: 120px;
+            overflow: hidden;
+            position: relative;
+        }
+        .resultado-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, white);
+        }
+        .resultado-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.85em;
+            color: #888;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+        .meta-badge {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .meta-author {
+            color: #666;
+            font-weight: 500;
+        }
+        .meta-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .no-resultados {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 60px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
+        }
+        .no-resultados h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .no-resultados p {
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <a href="../Homepage.html" class="logo-link">
+            <img src="../cer-logo.png" alt="CER Logo" class="logo">
+        </a>
+        <div class="header-buttons">
+            <button class="create-btn">CREATE</button>
+            <button class="login-btn">LOGIN</button>
+        </div>
+    </header>
+
+    <main class="busqueda-container">
+        <div class="busqueda-breadcrumb">
+            <a href="../Homepage.html">Inicio</a> > 
+            <span id="breadcrumbQuery">Resultados de búsqueda</span>
+        </div>
+
+        <div class="busqueda-header">
+            <h1 class="busqueda-title" id="busquedaTitle">Resultados de búsqueda</h1>
+            <p class="busqueda-query" id="busquedaQuery">Cargando...</p>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalResultados">0</div>
+                <div class="stat-label">Resultados encontrados</div>
+            </div>
+        </div>
+
+        <div class="resultados-grid" id="resultadosGrid">
+            <div class="no-resultados">
+                <h3>Cargando resultados...</h3>
+                <p>Por favor espera mientras buscamos.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener query de búsqueda de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            
+            if (!query || query.trim() === '') {
+                // Redirigir a homepage si no hay query
+                window.location.href = '../Homepage.html';
+                return;
+            }
+            
+            // Realizar búsqueda
+            const resultados = buscarReportajes(query);
+            
+            // Mostrar resultados
+            mostrarResultados(resultados, query);
+        });
+        
+        function buscarReportajes(query) {
+            const reportajes = JSON.parse(localStorage.getItem('reportajes') || '[]');
+            const queryLower = query.toLowerCase().trim();
+            const palabras = queryLower.split(/\s+/).filter(p => p.length > 0);
+            
+            if (palabras.length === 0) return [];
+            
+            // Buscar en títulos, contenido y autores
+            const resultados = reportajes.filter(reportaje => {
+                const titulo = (reportaje.title || '').toLowerCase();
+                const contenido = reportaje.content ? reportaje.content.replace(/<[^>]*>/g, '').toLowerCase() : '';
+                const autor = (reportaje.author || '').toLowerCase();
+                const autorId = (reportaje.authorId || '').toLowerCase();
+                
+                // Buscar si alguna palabra coincide en título, contenido o autor
+                return palabras.some(palabra => {
+                    return titulo.includes(palabra) || 
+                           contenido.includes(palabra) || 
+                           autor.includes(palabra) ||
+                           autorId.includes(palabra);
+                });
+            });
+            
+            // Ordenar por relevancia (títulos primero, luego contenido)
+            resultados.sort((a, b) => {
+                const aTitulo = (a.title || '').toLowerCase();
+                const bTitulo = (b.title || '').toLowerCase();
+                const aContenido = a.content ? a.content.replace(/<[^>]*>/g, '').toLowerCase() : '';
+                const bContenido = b.content ? b.content.replace(/<[^>]*>/g, '').toLowerCase() : '';
+                
+                const queryLower = query.toLowerCase();
+                
+                // Priorizar coincidencias en título
+                const aTituloMatch = aTitulo.includes(queryLower);
+                const bTituloMatch = bTitulo.includes(queryLower);
+                if (aTituloMatch && !bTituloMatch) return -1;
+                if (!aTituloMatch && bTituloMatch) return 1;
+                
+                // Luego por fecha más reciente
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+            
+            return resultados;
+        }
+        
+        function mostrarResultados(resultados, query) {
+            const grid = document.getElementById('resultadosGrid');
+            const titleEl = document.getElementById('busquedaTitle');
+            const queryEl = document.getElementById('busquedaQuery');
+            const totalEl = document.getElementById('totalResultados');
+            const breadcrumbEl = document.getElementById('breadcrumbQuery');
+            
+            // Actualizar header
+            queryEl.textContent = `"${query}"`;
+            breadcrumbEl.textContent = `Búsqueda: "${query}"`;
+            totalEl.textContent = resultados.length;
+            
+            if (resultados.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-resultados">
+                        <h3>No se encontraron resultados</h3>
+                        <p>No hay reportajes que coincidan con tu búsqueda: "<strong>${query}</strong>"</p>
+                        <p>Intenta con otras palabras clave o términos diferentes.</p>
+                        <a href="../Homepage.html" class="btn btn-primary" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 6px;">
+                            Volver al inicio
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = resultados.map(reportaje => {
+                const contenidoTexto = reportaje.content ? reportaje.content.replace(/<[^>]*>/g, '').substring(0, 200) : '';
+                const fecha = new Date(reportaje.timestamp).toLocaleDateString();
+                const autor = reportaje.author || reportaje.authorId || 'Anónimo';
+                
+                return `
+                    <div class="resultado-card" onclick="window.location.href='./leer.html?id=${reportaje.id}'">
+                        <div class="resultado-title">${reportaje.title}</div>
+                        <div class="resultado-content">${contenidoTexto}${contenidoTexto.length >= 200 ? '...' : ''}</div>
+                        <div class="resultado-meta">
+                            <span class="meta-badge">${reportaje.typeLabel || 'Event'}</span>
+                            <span class="meta-badge">${reportaje.subtypeLabel || ''}</span>
+                            <span class="meta-author">Por: ${autor}</span>
+                            <div class="meta-date">
+                                <span>📅</span>
+                                <span>${fecha}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+    
+    <!-- Scripts necesarios -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/modal-create.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="../js/login.js"></script>
+</body>
+</html>
+

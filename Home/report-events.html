@@ -105,11 +105,23 @@
         if (totalEl) totalEl.textContent = reportajes.length.toLocaleString();
     })();
     </script>
+    <script src="./js/auth.js"></script>
     <script src="./js/modal-create.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="./js/login.js"></script>
     <script>
     document.getElementById('ownReportBtn').addEventListener('click', function() {
+        // Verificar autenticación antes de redirigir
+        if (window.auth && !window.auth.isAuthenticated()) {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+                loginModal.classList.add('show');
+            } else {
+                alert('Debes iniciar sesión para crear un reportaje por iniciativa propia.');
+            }
+            return;
+        }
         window.location.href = 'reporte-por-iniciativa-propia.html';
     });
     </script>

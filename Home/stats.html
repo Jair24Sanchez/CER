@@ -26,38 +26,29 @@
         <div class="stats-grid">
             <div class="stats-item">
                 <h3>Organizers</h3>
-                <div class="stats-number">424</div>
-            </div>
-
-            <div class="stats-item">
-                <h3>Speakers</h3>
-                <div class="stats-number">5,000</div>
+                <div class="stats-number" id="organizersCount">0</div>
             </div>
 
             <div class="stats-item">
                 <h3>Reporters</h3>
-                <div class="stats-number">609</div>
+                <div class="stats-number" id="reportersCount">0</div>
             </div>
 
             <div class="stats-item">
-                <h3>Reports Last</h3>
-                <select class="time-select">
-                    <option value="12">12 H</option>
-                    <option value="24">24 H</option>
-                    <option value="36">36 H</option>
-                    <option value="48">48 H</option>
+                <h3>Reports</h3>
+                <select class="time-select" id="reportsTimeFilter">
+                    <option value="total">Total</option>
+                    <option value="24h">Últimas 24h</option>
+                    <option value="week">Última semana</option>
+                    <option value="month">Último mes</option>
+                    <option value="6months">Últimos 6 meses</option>
                 </select>
-                <div class="stats-number">3,324</div>
-            </div>
-
-            <div class="stats-item">
-                <h3>Events reported forever</h3>
-                <div class="stats-number">9,742</div>
+                <div class="stats-number" id="reportsCount">0</div>
             </div>
 
             <div class="stats-item">
                 <h3>Paid in reports</h3>
-                <div class="stats-number">$ 333,000</div>
+                <div class="stats-number" id="paidAmount">$ 0</div>
             </div>
         </div>
     </main>

@@ -188,6 +188,44 @@ document.addEventListener('DOMContentLoaded', function() {
     loadLatestEvents();
     updateTotalEventsCounter();
 
+    // Funcionalidad de búsqueda
+    const searchInput = document.getElementById('searchInput');
+    const searchIcon = document.getElementById('searchIcon');
+    
+    function performSearch() {
+        const query = searchInput ? searchInput.value.trim() : '';
+        if (query === '') {
+            alert('Por favor, ingresa un término de búsqueda');
+            return;
+        }
+        // Redirigir a página de resultados
+        window.location.href = `./reportajes/busqueda.html?q=${encodeURIComponent(query)}`;
+    }
+    
+    if (searchIcon) {
+        searchIcon.addEventListener('click', performSearch);
+        // Hacer que el ícono se vea como clickeable
+        searchIcon.style.cursor = 'pointer';
+        searchIcon.title = 'Buscar';
+    }
+    
+    if (searchInput) {
+        // Permitir búsqueda con Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+    }
+
+    // Botón Stats - navegar a stats.html
+    const statsBtn = document.querySelector('.stats-btn');
+    if (statsBtn) {
+        statsBtn.addEventListener('click', function() {
+            window.location.href = './stats.html';
+        });
+    }
+
     // MODAL CREATE
     const createBtn = document.querySelector('.create-btn');
     const createModal = document.getElementById('createModal');

@@ -137,6 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Manejo del envío del blog
     submitBtn.addEventListener('click', () => {
+        // Verificar autenticación antes de permitir crear reportaje
+        if (window.auth && !window.auth.isAuthenticated()) {
+            alert('Debes iniciar sesión para crear un reportaje.');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+                loginModal.classList.add('show');
+            }
+            return;
+        }
+
         const title = document.querySelector('.blog-title').value;
         const content = blogContent.innerHTML;
         const type = eventTypeSelect.value;
@@ -152,6 +163,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Obtener información del autor desde la sesión
+        const session = JSON.parse(localStorage.getItem('session') || 'null');
+        if (!session || (!session.email && !session.address && !session.provider)) {
+            alert('Error: No se pudo obtener la información de la sesión.');
+            return;
+        }
+        const authorName = session?.email ? session.email : (session?.address ? session.address : (session?.provider ? session.provider : 'reporter'));
+        const authorId = session?.email || session?.address || session?.provider || 'anon';
+
         // Crear objeto del reportaje
         const reportaje = {
             id: Date.now().toString(),
@@ -161,7 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
             subtype: subtype,
             typeLabel: type === 'irl' ? 'IRL Events' : 'Digital Events',
             subtypeLabel: secondaryFilter.options[secondaryFilter.selectedIndex].text,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            author: authorName,
+            authorId: authorId,
+            rewardType: 'voluntario',
+            rewardAmount: 0,
+            paid: false,
+            paidAt: null
         };
 
         // Guardar en localStorage

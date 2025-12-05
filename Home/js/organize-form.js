@@ -390,14 +390,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // Verificar autenticación antes de permitir crear evento
+            if (window.auth && !window.auth.isAuthenticated()) {
+                alert('Debes iniciar sesión para organizar un evento.');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                    loginModal.classList.add('show');
+                }
+                return;
+            }
+
             // Si todo está válido, proceder
-            const organizer = 'Organizador'; // Aquí puedes poner el nombre del usuario si lo tienes
+            // Obtener información del organizador desde la sesión
+            const session = JSON.parse(localStorage.getItem('session') || 'null');
+            if (!session || (!session.email && !session.address && !session.provider)) {
+                alert('Error: No se pudo obtener la información de la sesión.');
+                return;
+            }
+            const organizerName = session?.email ? session.email : (session?.address ? session.address : (session?.provider ? session.provider : 'Organizador'));
+            const organizerId = session?.email || session?.address || session?.provider || 'organizer-' + Date.now();
 
             // Crear objeto del evento solicitado
             const eventData = {
                 id: Date.now().toString(),
                 title,
-                organizer,
+                organizer: organizerName,
+                organizerId: organizerId,
                 type: document.querySelector('input[name="event-type"]:checked').value,
                 typeLabel: document.querySelector('input[name="event-type"]:checked').value === 'irl' ? 'IRL Events' : 'Digital Events',
                 subtype,
