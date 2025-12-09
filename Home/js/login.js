@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         closeModal();
     }
 
-    // Email/password
+    // Email/password - Actualizado para verificar usuarios registrados
     if (emailSubmit) {
         emailSubmit.addEventListener('click', () => {
             const email = emailInput?.value.trim();
@@ -79,10 +79,57 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Ingresa email y contraseña'); 
                 return; 
             }
-            setSession({ provider: 'email', email, timestamp: new Date().toISOString() });
-            notifyLogin('email');
+            
+            // Verificar si el usuario está registrado
+            if (window.emailRegister && window.emailRegister.verifyUser) {
+                if (window.emailRegister.verifyUser(email, pwd)) {
+                    setSession({ provider: 'email', email, timestamp: new Date().toISOString() });
+                    notifyLogin('email');
+                } else {
+                    alert('Email o contraseña incorrectos.');
+                }
+            } else {
+                // Fallback: permitir login sin verificación (modo demo)
+                setSession({ provider: 'email', email, timestamp: new Date().toISOString() });
+                notifyLogin('email');
+            }
         });
     }
+
+    // Función para re-inicializar listeners de login (para cuando se restaura el formulario)
+    function initLoginListeners() {
+        const emailSubmit = document.getElementById('loginSubmit');
+        const emailInput = document.getElementById('loginEmail');
+        const pwdInput = document.getElementById('loginPassword');
+        
+        if (emailSubmit) {
+            emailSubmit.addEventListener('click', () => {
+                const email = emailInput?.value.trim();
+                const pwd = pwdInput?.value.trim();
+                if (!email || !pwd) { 
+                    alert('Ingresa email y contraseña'); 
+                    return; 
+                }
+                
+                if (window.emailRegister && window.emailRegister.verifyUser) {
+                    if (window.emailRegister.verifyUser(email, pwd)) {
+                        setSession({ provider: 'email', email, timestamp: new Date().toISOString() });
+                        notifyLogin('email');
+                    } else {
+                        alert('Email o contraseña incorrectos.');
+                    }
+                } else {
+                    setSession({ provider: 'email', email, timestamp: new Date().toISOString() });
+                    notifyLogin('email');
+                }
+            });
+        }
+    }
+
+    // Exportar función para re-inicialización
+    window.loginModule = {
+        initLoginListeners: initLoginListeners
+    };
 
     // Google (GIS). Requiere configurar un Client ID: guarda en localStorage key 'googleClientId'
     if (googleBtn) {
@@ -205,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Escuchar cambios de cuenta
             if (provider.on) {
-                provider.on('accountsChanged', (accounts) => {
+                provider.on('accountsChanged', async (accounts) => {
                     if (accounts.length === 0) {
                         // Usuario desconectó la wallet
                         localStorage.removeItem('session');

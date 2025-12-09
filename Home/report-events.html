@@ -25,6 +25,9 @@
             <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
             <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
             <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
+            <div style="margin-top: 0.5rem; text-align: center;">
+                <a href="#" id="registerLink" style="color: #666; text-decoration: underline; font-size: 0.9rem;">Si no te has registrado haz click aquí</a>
+            </div>
             <div style="margin:8px 0; font-weight:600;">o</div>
             <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
             <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
@@ -105,8 +108,10 @@
         if (totalEl) totalEl.textContent = reportajes.length.toLocaleString();
     })();
     </script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="./js/web3-contract.js"></script>
+    <script src="./js/email-register.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/modal-create.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
