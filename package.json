@@ -1,0 +1,36 @@
+{
+  "name": "cer",
+  "version": "1.0.0",
+  "description": "Crypto Event Reports - Plataforma descentralizada para reportajes de eventos",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:arbitrum-sepolia": "hardhat run scripts/deploy.js --network arbitrumSepolia",
+    "deploy:arbitrum": "hardhat run scripts/deploy.js --network arbitrum",
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "verify:arbitrum-sepolia": "hardhat verify --network arbitrumSepolia",
+    "verify:arbitrum": "hardhat verify --network arbitrum",
+    "test": "hardhat test",
+    "clean": "hardhat clean"
+  },
+  "keywords": [
+    "ethereum",
+    "arbitrum",
+    "blockchain",
+    "web3",
+    "nft",
+    "events"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "web3": "^4.2.0"
+  }
+}
+

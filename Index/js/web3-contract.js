@@ -4,8 +4,30 @@
 (function() {
     'use strict';
 
+    // Cargar configuración de red (debe estar cargada antes de este script)
+    // Si no está disponible, usar valores por defecto
+    const networkConfig = window.networkConfig || {
+        getActiveNetwork: () => ({ chainId: '0xaa36a7', name: 'Sepolia Testnet' }),
+        checkNetwork: async () => true
+    };
+
     // Dirección del contrato inteligente (se configurará cuando se despliegue)
-    const CONTRACT_ADDRESS = localStorage.getItem('cerContractAddress') || '0x0000000000000000000000000000000000000000';
+    // Se almacena por red para soportar múltiples redes
+    function getContractAddress() {
+        const network = networkConfig.getActiveNetwork();
+        const networkKey = network.name.replace(/\s+/g, '').toLowerCase();
+        const stored = localStorage.getItem(`cerContractAddress_${networkKey}`);
+        return stored || localStorage.getItem('cerContractAddress') || '0x0000000000000000000000000000000000000000';
+    }
+
+    function setContractAddress(address) {
+        const network = networkConfig.getActiveNetwork();
+        const networkKey = network.name.replace(/\s+/g, '').toLowerCase();
+        localStorage.setItem(`cerContractAddress_${networkKey}`, address);
+        localStorage.setItem('cerContractAddress', address); // Compatibilidad hacia atrás
+    }
+
+    const CONTRACT_ADDRESS = getContractAddress();
     
     // ABI simplificado del contrato (interfaz)
     const CONTRACT_ABI = [
@@ -111,6 +133,14 @@
             throw new Error('No se encontró un proveedor de Web3. Por favor, instala MetaMask u otra wallet.');
         }
 
+        // Verificar y cambiar a la red correcta si es necesario
+        try {
+            await networkConfig.checkNetwork();
+        } catch (error) {
+            console.warn('Error verificando red:', error);
+            // Continuar de todas formas, el usuario puede cambiar manualmente
+        }
+
         const provider = window.ethereum;
         const web3 = new Web3(provider);
         
@@ -120,8 +150,11 @@
             throw new Error('No se pudo obtener la cuenta de la wallet.');
         }
 
+        // Obtener dirección del contrato actualizada
+        const contractAddress = getContractAddress();
+
         // Crear instancia del contrato
-        const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+        const contract = new web3.eth.Contract(CONTRACT_ABI, contractAddress);
         return { contract, web3, account: accounts[0] };
     }
 
@@ -412,9 +445,9 @@
         getOrganizerRequests,
         getAvailableRequests,
         getContract,
-        setContractAddress: (address) => {
-            localStorage.setItem('cerContractAddress', address);
-        }
+        setContractAddress: setContractAddress,
+        getContractAddress: getContractAddress,
+        getNetworkConfig: () => networkConfig
     };
 })();
 

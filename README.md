@@ -1,3 +1,0 @@
-# cer
-# CER
-# CER
