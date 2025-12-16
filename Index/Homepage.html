@@ -19,23 +19,23 @@
 
     <!-- Modal LOGIN -->
     <div id="loginModal" class="modal-create" style="display:none;">
-        <div class="modal-create-content" style="height:auto; min-height:auto; gap:12px;">
-            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo" style="margin-bottom:0;">
-            <div class="modal-create-title" style="margin:0;">LOGIN</div>
-            <input id="loginEmail" type="email" placeholder="Email" class="filter-select" style="width: 90%;">
-            <input id="loginPassword" type="password" placeholder="Password" class="filter-select" style="width: 90%;">
-            <button id="loginSubmit" class="modal-create-btn" style="background:#000;">Entrar</button>
-            <div style="margin-top: 0.5rem; text-align: center;">
-                <a href="#" id="registerLink" style="color: #666; text-decoration: underline; font-size: 0.9rem;">Si no te has registrado haz click aquí</a>
+        <div class="modal-create-content modal-login-content">
+            <img src="./cer_blanco.png" alt="CER Logo" class="modal-create-logo modal-login-logo">
+            <div class="modal-create-title modal-login-title">LOGIN</div>
+            <input id="loginEmail" type="email" placeholder="Email" class="login-input">
+            <input id="loginPassword" type="password" placeholder="Password" class="login-input">
+            <button id="loginSubmit" class="login-submit-btn">Entrar</button>
+            <div class="register-link-container">
+                <a href="#" id="registerLink" class="register-link">Si no te has registrado haz click aquí</a>
             </div>
-            <div style="margin:8px 0; font-weight:600;">o</div>
-            <button id="googleLoginBtn" class="modal-create-btn google-btn">Continuar con Google</button>
-            <div style="margin:8px 0; font-weight:600;">o conecta una wallet</div>
+            <div class="login-divider">o</div>
+            <button id="googleLoginBtn" class="google-login-btn">Continuar con Google</button>
+            <div class="login-divider">o conecta una wallet</div>
             <div class="wallet-grid">
-                <button id="metamaskBtn" class="modal-create-btn">MetaMask</button>
-                <button id="coinbaseBtn" class="modal-create-btn">Coinbase Wallet</button>
-                <button id="rabbyBtn" class="modal-create-btn">Rabby</button>
-                <button id="walletConnectBtn" class="modal-create-btn">WalletConnect</button>
+                <button id="metamaskBtn" class="wallet-btn">MetaMask</button>
+                <button id="coinbaseBtn" class="wallet-btn">Coinbase Wallet</button>
+                <button id="rabbyBtn" class="wallet-btn">Rabby</button>
+                <button id="walletConnectBtn" class="wallet-btn">WalletConnect</button>
             </div>
         </div>
     </div>

@@ -425,21 +425,35 @@
     function init() {
         // Esperar a que login.js se cargue
         setTimeout(() => {
-            // Agregar enlace de registro a todos los modales de login
+            // Agregar event listeners a todos los enlaces de registro existentes
+            const registerLinks = document.querySelectorAll('#registerLink');
+            registerLinks.forEach(link => {
+                // Remover listeners previos
+                const newLink = link.cloneNode(true);
+                link.parentNode.replaceChild(newLink, link);
+                
+                // Agregar nuevo listener
+                newLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showRegisterForm();
+                });
+            });
+
+            // Si no hay enlaces, agregarlos dinámicamente
             const loginModals = document.querySelectorAll('#loginModal');
             loginModals.forEach(modal => {
                 const modalContent = modal.querySelector('.modal-create-content');
                 if (modalContent && !modalContent.querySelector('#registerLink')) {
                     const loginSubmit = modalContent.querySelector('#loginSubmit');
                     if (loginSubmit) {
-                        const registerLink = document.createElement('div');
-                        registerLink.style.cssText = 'margin-top: 0.5rem; text-align: center;';
-                        registerLink.innerHTML = `
-                            <a href="#" id="registerLink" style="color: #666; text-decoration: underline; font-size: 0.9rem;">Si no te has registrado haz click aquí</a>
+                        const registerLinkContainer = document.createElement('div');
+                        registerLinkContainer.className = 'register-link-container';
+                        registerLinkContainer.innerHTML = `
+                            <a href="#" id="registerLink" class="register-link">Si no te has registrado haz click aquí</a>
                         `;
-                        loginSubmit.parentNode.insertBefore(registerLink, loginSubmit.nextSibling);
+                        loginSubmit.parentNode.insertBefore(registerLinkContainer, loginSubmit.nextSibling);
                         
-                        registerLink.querySelector('#registerLink').addEventListener('click', (e) => {
+                        registerLinkContainer.querySelector('#registerLink').addEventListener('click', (e) => {
                             e.preventDefault();
                             showRegisterForm();
                         });

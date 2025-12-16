@@ -115,7 +115,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const filterValue = secondaryFilter.value;
         
         if (eventType && filterValue) {
-            const categoryUrl = `./reportajes/categoria.html?type=${eventType}&subtype=${filterValue}`;
+            // Detectar si estamos en la raíz (index.html) o en Index/
+            const isRoot = window.location.pathname.endsWith('/index.html') || window.location.pathname.endsWith('/') || !window.location.pathname.includes('/Index/');
+            const categoryUrl = isRoot 
+                ? `./Index/reportajes/categoria.html?type=${eventType}&subtype=${filterValue}`
+                : `./reportajes/categoria.html?type=${eventType}&subtype=${filterValue}`;
             window.location.href = categoryUrl;
         }
     }
